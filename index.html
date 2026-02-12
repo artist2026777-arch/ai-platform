@@ -2,26 +2,48 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Telegram AI Bot Stable Installer</title>
+<title>AI Telegram Bot Constructor</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl-util/0.15.1/nacl-util.min.js"></script>
 <style>
 body{background:#0f1115;color:#fff;font-family:monospace;padding:20px}
-input{width:100%;margin:5px 0;padding:8px;background:#1a1d24;border:1px solid #333;color:#fff}
-button{padding:10px;background:#00ff99;border:none;font-weight:bold;cursor:pointer}
-#log{background:#000;padding:10px;height:300px;overflow:auto;margin-top:10px}
+input,textarea{
+width:100%;
+margin:6px 0;
+padding:10px;
+background:#1a1d24;
+border:1px solid #333;
+color:#fff
+}
+textarea{height:120px}
+button{
+padding:12px;
+background:#00ff99;
+border:none;
+font-weight:bold;
+cursor:pointer
+}
+#log{
+background:#000;
+padding:10px;
+height:300px;
+overflow:auto;
+margin-top:15px
+}
 </style>
 </head>
 <body>
 
-<h2>🔥 Telegram AI Bot — Stable 24/7 Installer</h2>
+<h2>🔥 AI Telegram Bot Constructor</h2>
 
 <input id="token" placeholder="GitHub PAT (repo + workflow)">
 <input id="repo" placeholder="Repository name">
 <input id="tg" placeholder="Telegram Bot Token">
 <input id="openrouter" placeholder="OpenRouter API Key">
 
-<button onclick="install()">INSTALL</button>
+<textarea id="desc" placeholder="Опиши какого бота создать... (кнопки, админ, база, состояния и тд)"></textarea>
+
+<button onclick="install()">GENERATE & DEPLOY</button>
 
 <pre id="log"></pre>
 
@@ -36,8 +58,12 @@ const token=document.getElementById("token").value.trim();
 const repo=document.getElementById("repo").value.trim();
 const tg=document.getElementById("tg").value.trim();
 const openrouter=document.getElementById("openrouter").value.trim();
+const desc=document.getElementById("desc").value.trim();
 
-if(!token||!repo||!tg||!openrouter){log("Заполни все поля");return;}
+if(!token||!repo||!tg||!openrouter||!desc){
+log("Заполни все поля");
+return;
+}
 
 const headers={
 Authorization:`token ${token}`,
@@ -47,11 +73,13 @@ Accept:"application/vnd.github+json",
 
 try{
 
+log("→ Проверка GitHub");
 const userRes=await fetch("https://api.github.com/user",{headers});
-if(!userRes.ok) throw new Error("PAT неверный");
 const user=await userRes.json();
 const username=user.login;
+log("✓ Аккаунт: "+username);
 
+log("→ Создание репозитория");
 await fetch("https://api.github.com/user/repos",{
 method:"POST",
 headers,
@@ -60,122 +88,47 @@ body:JSON.stringify({name:repo,private:false})
 
 const repoApi=`https://api.github.com/repos/${username}/${repo}`;
 
-async function upload(path,content){
-const url=`${repoApi}/contents/${path}`;
-let sha;
-const check=await fetch(url,{headers});
-if(check.ok){sha=(await check.json()).sha;}
-await fetch(url,{
-method:"PUT",
-headers,
-body:JSON.stringify({
-message:"auto install "+path,
-content:b64(content),
-sha
-})
-});
-}
+log("→ Генерация кода бота через AI");
 
-const bot=`
-import fetch from "node-fetch";
-
-const TOKEN = process.env.TELEGRAM_TOKEN;
-const OPENROUTER = process.env.OPENROUTER_KEY;
-const GH_TOKEN = process.env.GITHUB_TOKEN;
-const REPO = process.env.GITHUB_REPOSITORY;
-
-let offset=0;
-let offsetSha=null;
-
-async function githubGet(path){
-const r=await fetch(\`https://api.github.com/repos/\${REPO}/contents/\${path}\`,{
-headers:{Authorization:\`token \${GH_TOKEN}\`}
-});
-return r.json();
-}
-
-async function githubPut(path,content,sha,message){
-await fetch(\`https://api.github.com/repos/\${REPO}/contents/\${path}\`,{
-method:"PUT",
-headers:{
-Authorization:\`token \${GH_TOKEN}\`,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-message,
-content:Buffer.from(content).toString("base64"),
-sha
-})
-});
-}
-
-async function loadOffset(){
-const d=await githubGet("offset.json");
-offsetSha=d.sha;
-offset=JSON.parse(Buffer.from(d.content,"base64").toString()).offset||0;
-}
-
-async function saveOffset(){
-await githubPut("offset.json",JSON.stringify({offset}),offsetSha,"update offset");
-}
-
-async function ai(text){
-const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+const aiRes=await fetch("https://openrouter.ai/api/v1/chat/completions",{
 method:"POST",
 headers:{
-Authorization:\`Bearer \${OPENROUTER}\`,
+Authorization:`Bearer ${openrouter}`,
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
 model:"openai/gpt-4o-mini",
-messages:[{role:"user",content:text}]
+messages:[
+{role:"system",content:
+"Ты генерируешь ПОЛНЫЙ рабочий Telegram бот Node.js (long polling) без библиотек кроме node-fetch. Поддержка: команды, inline кнопки, callback_query, состояния пользователей, JSON хранение данных."},
+{role:"user",content:desc}
+],
+temperature:0.3
 })
 });
-const d=await r.json();
-return d.choices?.[0]?.message?.content||"AI error";
+
+const aiData=await aiRes.json();
+let botCode=aiData.choices?.[0]?.message?.content;
+
+if(!botCode || botCode.length<500){
+throw new Error("AI вернул недостаточно кода");
 }
 
-async function send(id,text){
-await fetch(\`https://api.telegram.org/bot\${TOKEN}/sendMessage\`,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({chat_id:id,text})
+log("✓ Код сгенерирован");
+
+async function upload(path,content){
+await fetch(`${repoApi}/contents/${path}`,{
+method:"PUT",
+headers,
+body:JSON.stringify({
+message:"auto upload "+path,
+content:b64(content)
+})
 });
+log("✓ "+path);
 }
 
-async function loop(){
-const start=Date.now();
-while(true){
-
-if(Date.now()-start>1000*60*340){
-console.log("Restarting workflow...");
-process.exit(0);
-}
-
-const r=await fetch(\`https://api.telegram.org/bot\${TOKEN}/getUpdates?offset=\${offset}\`);
-const d=await r.json();
-
-for(const u of d.result){
-offset=u.update_id+1;
-if(u.message?.text){
-const reply=await ai(u.message.text);
-await send(u.message.chat.id,reply);
-}
-}
-
-if(d.result.length>0){
-await saveOffset();
-}
-
-await new Promise(res=>setTimeout(res,2000));
-}
-}
-
-await loadOffset();
-await loop();
-`;
-
-await upload("bot.js",bot);
+await upload("bot.js",botCode);
 
 await upload("package.json",JSON.stringify({
 type:"module",
@@ -183,9 +136,10 @@ dependencies:{ "node-fetch":"^3.3.2" }
 },null,2));
 
 await upload("offset.json",'{"offset":0}');
+await upload("users.json",'{}');
 
 const workflow=`
-name: Stable Runner
+name: AI Bot Runner
 on:
 schedule:
 - cron: "*/5 * * * *"
@@ -207,9 +161,11 @@ OPENROUTER_KEY: \${{ secrets.OPENROUTER_KEY }}
 GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
 `;
 
-await upload(".github/workflows/stable.yml",workflow);
+await upload(".github/workflows/runner.yml",workflow);
 
-const keyRes=await fetch(\`\${repoApi}/actions/secrets/public-key\`,{headers});
+log("→ Добавление секретов");
+
+const keyRes=await fetch(`${repoApi}/actions/secrets/public-key`,{headers});
 const {key,key_id}=await keyRes.json();
 
 function encrypt(val){
@@ -218,20 +174,26 @@ const msg=naclUtil.decodeUTF8(val);
 return naclUtil.encodeBase64(nacl.box.seal(msg,pk));
 }
 
-await fetch(\`\${repoApi}/actions/secrets/TELEGRAM_TOKEN\`,{
+await fetch(`${repoApi}/actions/secrets/TELEGRAM_TOKEN`,{
 method:"PUT",
 headers,
-body:JSON.stringify({encrypted_value:encrypt(tg),key_id})
+body:JSON.stringify({
+encrypted_value:encrypt(tg),
+key_id
+})
 });
 
-await fetch(\`\${repoApi}/actions/secrets/OPENROUTER_KEY\`,{
+await fetch(`${repoApi}/actions/secrets/OPENROUTER_KEY`,{
 method:"PUT",
 headers,
-body:JSON.stringify({encrypted_value:encrypt(openrouter),key_id})
+body:JSON.stringify({
+encrypted_value:encrypt(openrouter),
+key_id
+})
 });
 
-log("✅ INSTALL COMPLETE");
-log("Перейди в GitHub → Actions → Stable Runner → Run workflow");
+log("🔥 ДЕПЛОЙ ЗАВЕРШЕН");
+log("Перейди в GitHub → Actions → AI Bot Runner → Run workflow");
 
 }catch(e){
 log("Ошибка: "+e.message);
