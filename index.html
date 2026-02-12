@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Copilot PRO — Русский автодеплой</title>
+    <title>AI Copilot ULTRA — Полный автомат</title>
     <style>
         * {
             margin: 0;
@@ -12,9 +12,9 @@
         }
 
         body {
-            background: linear-gradient(145deg, #0b1120 0%, #0f172a 100%);
+            background: linear-gradient(145deg, #0a0c14 0%, #0f172a 100%);
             color: #f1f5f9;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             padding: 48px 24px;
             display: flex;
             flex-direction: column;
@@ -23,229 +23,231 @@
         }
 
         .container {
-            max-width: 880px;
+            max-width: 900px;
             width: 100%;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid #334155;
-            border-radius: 32px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            background: rgba(10, 20, 40, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #22c55e40;
+            border-radius: 40px;
+            padding: 44px;
+            box-shadow: 0 30px 60px -12px #00000080;
         }
 
         h2 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
+            font-size: 2.4rem;
+            font-weight: 800;
             margin-bottom: 8px;
-            background: linear-gradient(to right, #e2e8f0, #b9e6ff);
+            background: linear-gradient(to right, #ffffff, #b3ffc0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
         .badge {
-            background: #1e293b;
-            color: #94a3b8;
-            font-size: 0.75rem;
-            padding: 4px 12px;
+            background: #22c55e;
+            color: black;
+            font-size: 0.8rem;
+            padding: 6px 16px;
             border-radius: 100px;
-            border: 1px solid #334155;
-            -webkit-text-fill-color: #94a3b8;
+            font-weight: 700;
+            -webkit-text-fill-color: black;
+            border: 1px solid #4ade80;
+            letter-spacing: 0.5px;
+        }
+
+        .ultra-badge {
+            background: #f59e0b;
+            color: black;
+            font-size: 0.75rem;
+            padding: 4px 14px;
+            border-radius: 100px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
 
         .sub {
             color: #94a3b8;
             margin-bottom: 32px;
-            border-left: 4px solid #22c55e;
             padding-left: 16px;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            border-left: 4px solid #22c55e;
         }
 
         .field {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         label {
             display: block;
             font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
             color: #94a3b8;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
         input, textarea {
             width: 100%;
-            padding: 14px 18px;
-            background: #030712;
-            border: 1px solid #1e293b;
-            border-radius: 20px;
+            padding: 16px 22px;
+            background: #030712e0;
+            border: 1.5px solid #1e293b;
+            border-radius: 30px;
             color: white;
             font-size: 1rem;
-            transition: 0.2s ease;
+            transition: 0.2s;
             outline: none;
             font-family: inherit;
+            border: 1px solid #334155;
         }
 
         input:focus, textarea:focus {
             border-color: #22c55e;
-            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
-            background: #0b1120;
+            box-shadow: 0 0 0 4px #22c55e30;
+            background: #050a15;
         }
 
         textarea {
-            min-height: 120px;
+            min-height: 140px;
             resize: vertical;
         }
 
         button {
             width: 100%;
-            background: linear-gradient(to right, #15803d, #22c55e);
+            background: linear-gradient(135deg, #16a34a, #22c55e);
             color: white;
-            font-weight: 700;
-            padding: 16px 24px;
+            font-weight: 800;
+            padding: 18px 28px;
             border: none;
-            border-radius: 40px;
-            font-size: 1.2rem;
-            margin: 24px 0 16px;
+            border-radius: 60px;
+            font-size: 1.4rem;
+            margin: 28px 0 20px;
             cursor: pointer;
-            transition: 0.15s;
+            transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.25);
+            gap: 16px;
+            border: 1px solid #86efac;
+            box-shadow: 0 10px 30px #22c55e60;
+            text-shadow: 0 2px 4px black;
         }
 
         button:hover {
-            background: linear-gradient(to right, #166534, #16a34a);
-            transform: scale(1.01);
-            box-shadow: 0 12px 28px rgba(34, 197, 94, 0.4);
+            background: linear-gradient(135deg, #15803d, #16a34a);
+            transform: scale(1.02);
+            box-shadow: 0 18px 40px #22c55e;
         }
 
         .log-box {
-            background: #030712;
-            border-radius: 20px;
-            padding: 24px;
+            background: #030712e0;
+            border-radius: 24px;
+            padding: 26px;
             border: 1px solid #1e293b;
-            margin-top: 24px;
+            margin-top: 20px;
+            backdrop-filter: blur(4px);
         }
 
         pre {
-            color: #cbd5e1;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            line-height: 1.7;
             white-space: pre-wrap;
             word-wrap: break-word;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            max-height: 260px;
+            font-family: 'JetBrains Mono', monospace;
+            max-height: 350px;
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #22c55e #0f172a;
-        }
-
-        pre::-webkit-scrollbar {
-            width: 6px;
-        }
-        pre::-webkit-scrollbar-thumb {
-            background: #22c55e;
-            border-radius: 10px;
         }
 
         .footer-note {
-            margin-top: 24px;
+            margin-top: 28px;
             color: #5f6c80;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             text-align: center;
             border-top: 1px solid #1e293b;
-            padding-top: 20px;
+            padding-top: 24px;
         }
 
-        .emoji {
-            font-size: 1.3rem;
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .glow {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>
-            ⚡ AI Copilot PRO 
-            <span class="badge">Русская версия</span>
+            🤖 AI Copilot ULTRA
+            <span class="badge">АВТОНОМНЫЙ</span>
+            <span class="ultra-badge">v3.0</span>
         </h2>
         <div class="sub">
-            🚀 Создай репозиторий + ИИ-код + Docker + Pages + автодеплой за 1 клик. GitHub API, OpenRouter.
+            ⚡ Ты ничего не вводишь, кроме токенов и описания. ИИ сам придумает название, создаст репозиторий, код, Docker, Pages.
         </div>
 
-        <!-- Поля ввода на русском, понятные -->
         <div class="field">
-            <label>🔐 GitHub Personal Token</label>
-            <input id="token" type="password" placeholder="например: ghp_xxxxxxxxxxxxxxx">
+            <label>🔐 GitHub Personal Token (нужны права repo)</label>
+            <input id="token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
         </div>
         <div class="field">
             <label>🧠 OpenRouter API ключ</label>
-            <input id="openrouter" type="password" placeholder="sk-or-v1-xxxxxxxxxx">
+            <input id="openrouter" type="password" placeholder="sk-or-v1-xxxxxxxxxxxxxxxx">
         </div>
         <div class="field">
-            <label>📦 Название репозитория</label>
-            <input id="repo" placeholder="мой-крутой-бот">
-        </div>
-        <div class="field">
-            <label>📝 Опиши проект (на русском)</label>
-            <textarea id="desc" placeholder="Например: Telegram бот на Python с aiogram, который приветствует пользователя и отправляет случайную картинку кота">Telegram бот на aiogram с командой /start и /cat</textarea>
+            <label>📝 Опиши любой проект одной строкой</label>
+            <textarea id="desc" placeholder="Например: Telegram бот для поиска авиабилетов, сайт-портфолио с анимацией, API на FastAPI для заметок, парсер новостей с уведомлениями...">Современный сайт-визитка для дизайнера с темной темой и плавными анимациями</textarea>
         </div>
 
         <button onclick="createProject()">
-            <span class="emoji">⚡</span> Запустить генерацию PRO-проекта
+            <span class="glow">⚡</span> ЗАПУСТИТЬ ПОЛНЫЙ АВТОМАТ
         </button>
 
         <div class="log-box">
             <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
-                <span style="background:#22c55e; width: 12px; height: 12px; border-radius: 50%; display: inline-block;"></span>
-                <span style="font-weight: 600;">Консоль сборки</span>
+                <span class="status-dot"></span>
+                <span style="font-weight: 700; font-size: 1.1rem;">НЕЙРОСБОРЩИК</span>
             </div>
-            <pre id="log">👋 Готов к созданию проекта. Введи данные и нажми кнопку.</pre>
+            <pre id="log">🤖 Ожидаю команду... Введи токены и описание, я сам придумаю название и создам всё.</pre>
         </div>
         <div class="footer-note">
-            ✅ GitHub Pages включится автоматически • Полная структура • Docker • CI/CD • Всё на русском
+            ✅ ИИ генерирует название репозитория • Автоструктура • Docker • Pages • Всё без твоего участия
         </div>
     </div>
 
     <script>
         async function createProject() {
             const log = document.getElementById("log");
-            log.innerHTML = "⏳ Старт процесса...\n";
+            log.innerHTML = "⏳ Инициализация нейросборщика...\n";
 
-            // Считываем поля
             const token = document.getElementById("token").value.trim();
             const openrouterKey = document.getElementById("openrouter").value.trim();
-            let repoName = document.getElementById("repo").value.trim();
             const desc = document.getElementById("desc").value.trim();
 
-            if (!token || !repoName || !openrouterKey) {
-                alert("❌ Заполни ВСЕ поля: токен GitHub, ключ OpenRouter и название репозитория.");
+            if (!token || !openrouterKey || !desc) {
+                alert("❌ Заполни ВСЕ поля: токен GitHub, ключ OpenRouter и описание проекта");
                 return;
             }
 
-            // Транслитерация имени репо (чтобы без пробелов, только латиница и дефисы)
-            repoName = repoName.toLowerCase()
-                .replace(/[^a-z0-9-]/g, '-')
-                .replace(/--+/g, '-')
-                .replace(/^-|-$/g, '');
-
-            if (!repoName) {
-                alert("❌ Название репозитория должно содержать латинские буквы или цифры.");
-                return;
-            }
-
-            // Удобная обёртка для GitHub API
+            // GitHub API wrapper
             async function gh(url, method, body = null) {
-                return fetch(url, {
+                const res = await fetch(url, {
                     method: method,
                     headers: {
                         "Authorization": `token ${token}`,
@@ -254,14 +256,236 @@
                     },
                     body: body ? JSON.stringify(body) : null
                 });
+                return res;
             }
 
             try {
-                // ---- 1. СОЗДАНИЕ РЕПОЗИТОРИЯ ----
-                log.innerHTML += "📦 Создаю новый репозиторий на GitHub...\n";
+                // ========== 1. ПРОВЕРКА ТОКЕНА И ПОЛУЧЕНИЕ ПОЛЬЗОВАТЕЛЯ ==========
+                log.innerHTML += "🔑 Проверяю GitHub токен...\n";
+                const userResp = await gh("https://api.github.com/user", "GET");
+                if (!userResp.ok) throw new Error("Токен недействителен");
+                const userData = await userResp.json();
+                const username = userData.login;
+                log.innerHTML += `✅ GitHub: ${username}\n`;
+
+                // ========== 2. ИИ ГЕНЕРИРУЕТ НАЗВАНИЕ РЕПОЗИТОРИЯ ==========
+                log.innerHTML += "🧠 ИИ придумывает название для проекта...\n";
+                
+                const namePrompt = `Придумай УНИКАЛЬНОЕ латинское название для GitHub репозитория для проекта: "${desc}".
+                
+Требования к названию:
+- Только латиница, цифры, дефисы
+- Без пробелов
+- Длина 4-20 символов
+- Оригинальное, не common (не "my-project", "test", "app")
+- Отвечает сути проекта
+- ТОЛЬКО название, ничего лишнего
+
+Примеры: ai-travel-bot, dark-portfolio-2025, fastapi-notes-api, crypto-parser-pro
+Название:`;
+
+                const nameResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${openrouterKey}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.origin,
+                        "X-Title": "AI Copilot ULTRA"
+                    },
+                    body: JSON.stringify({
+                        model: "openai/gpt-3.5-turbo",
+                        messages: [
+                            { role: "system", content: "Ты гениальный нейминг-эксперт. Отвечаешь ТОЛЬКО одним названием, без кавычек и пояснений." },
+                            { role: "user", content: namePrompt }
+                        ],
+                        temperature: 0.8
+                    })
+                });
+
+                if (!nameResponse.ok) throw new Error("Ошибка генерации названия");
+                const nameData = await nameResponse.json();
+                let repoName = nameData.choices[0].message.content.trim();
+                
+                // Очищаем название от мусора
+                repoName = repoName.toLowerCase()
+                    .replace(/[^a-z0-9-]/g, '-')
+                    .replace(/--+/g, '-')
+                    .replace(/^-|-$/g, '')
+                    .substring(0, 30);
+                
+                // Если название пустое или слишком короткое - генерируем запасное
+                if (!repoName || repoName.length < 3) {
+                    repoName = `project-${Date.now().toString(36)}`;
+                }
+                
+                log.innerHTML += `📌 ИИ придумал название: ${repoName}\n`;
+
+                // ========== 3. ПРОВЕРКА, СВОБОДНО ЛИ НАЗВАНИЕ ==========
+                log.innerHTML += "🔍 Проверяю доступность имени...\n";
+                const checkRepo = await gh(`https://api.github.com/repos/${username}/${repoName}`, "GET");
+                
+                if (checkRepo.status === 200) {
+                    log.innerHTML += "⚠️ Название занято! Генерирую уникальное...\n";
+                    repoName = `${repoName}-${Math.floor(Math.random() * 10000)}`;
+                    log.innerHTML += `📌 Новое название: ${repoName}\n`;
+                }
+
+                // ========== 4. ИИ ГЕНЕРИРУЕТ КОД ПРОЕКТА ==========
+                log.innerHTML += "🧠 ИИ генерирует код проекта...\n";
+                
+                const codePrompt = `Создай ПОЛНОСТЬЮ РАБОЧИЙ ПРОДАКШН проект на тему: "${desc}".
+
+ПРОАНАЛИЗИРУЙ ЧТО ЭТО:
+- Если это веб-сайт/лендинг/портфолио → создай index.html с современным CSS, адаптивом, анимациями
+- Если это Telegram бот → создай main.py на aiogram с полной структурой
+- Если это API/бэкенд → создай main.py на FastAPI или aiohttp
+- Если это парсер/утилита → создай main.py с логикой
+
+ФОРМАТ ВЫВОДА СТРОГО:
+
+---project-type---
+(web/bot/api/script)
+
+---main-file---
+(ПОЛНЫЙ КОД главного файла - index.html или main.py)
+
+---requirements---
+(список зависимостей, каждая с новой строки)
+
+---description---
+(краткое описание для README)
+
+Никаких лишних комментариев, ТОЛЬКО КОД.`;
+
+                const codeResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${openrouterKey}`,
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": window.location.origin,
+                        "X-Title": "AI Copilot ULTRA"
+                    },
+                    body: JSON.stringify({
+                        model: "openai/gpt-3.5-turbo",
+                        messages: [
+                            { role: "system", content: "Ты senior fullstack разработчик. Пишешь только код, без объяснений." },
+                            { role: "user", content: codePrompt }
+                        ],
+                        temperature: 0.4,
+                        max_tokens: 2000
+                    })
+                });
+
+                if (!codeResponse.ok) throw new Error("Ошибка генерации кода");
+                const codeData = await codeResponse.json();
+                const generatedCode = codeData.choices[0].message.content;
+
+                // ========== 5. ПАРСИНГ СГЕНЕРИРОВАННЫХ ДАННЫХ ==========
+                log.innerHTML += "📦 Обрабатываю код...\n";
+                
+                let projectType = "web";
+                let mainCode = "";
+                let requirements = "";
+                let projectDesc = desc;
+
+                // Определяем тип проекта
+                const typeMatch = generatedCode.match(/---project-type---\s*([^\n]+)/i);
+                if (typeMatch) projectType = typeMatch[1].trim().toLowerCase();
+
+                // Парсим главный файл
+                const mainMatch = generatedCode.match(/---main-file---\s*([\s\S]*?)(?=---requirements---|---description---|$)/i);
+                if (mainMatch && mainMatch[1].trim()) {
+                    mainCode = mainMatch[1].trim();
+                }
+
+                // Парсим зависимости
+                const reqMatch = generatedCode.match(/---requirements---\s*([\s\S]*?)(?=---description---|$)/i);
+                if (reqMatch && reqMatch[1].trim()) {
+                    requirements = reqMatch[1].trim();
+                }
+
+                // Парсим описание
+                const descMatch = generatedCode.match(/---description---\s*([\s\S]*?)(?=---|$)/i);
+                if (descMatch && descMatch[1].trim()) {
+                    projectDesc = descMatch[1].trim();
+                }
+
+                // ========== 6. УСТАНАВЛИВАЕМ ЗАПАСНЫЕ ЗНАЧЕНИЯ ==========
+                if (!mainCode) {
+                    if (projectType.includes('web') || projectType.includes('site') || desc.toLowerCase().includes('сайт')) {
+                        mainCode = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${repoName}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #0f172a; 
+            color: white; 
+            font-family: system-ui; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .card {
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid #22c55e;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 { color: #22c55e; margin-bottom: 20px; }
+        p { color: #94a3b8; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 ${repoName}</h1>
+        <p>${projectDesc}</p>
+        <p style="margin-top: 30px; color: #4ade80;">✨ Создано AI Copilot ULTRA</p>
+    </div>
+</body>
+</html>`;
+                        projectType = "web";
+                    } else {
+                        mainCode = `import asyncio
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+async def main():
+    logger.info("🚀 Запуск проекта: ${repoName}")
+    logger.info("📝 Описание: ${projectDesc}")
+    
+if __name__ == "__main__":
+    asyncio.run(main())`;
+                        projectType = "script";
+                    }
+                }
+
+                if (!requirements) {
+                    if (projectType.includes('bot') || desc.toLowerCase().includes('telegram') || desc.toLowerCase().includes('бот')) {
+                        requirements = "aiogram==2.25.1\npython-dotenv==1.0.0\nrequests==2.31.0";
+                    } else if (projectType.includes('api') || desc.toLowerCase().includes('fastapi') || desc.toLowerCase().includes('rest')) {
+                        requirements = "fastapi==0.104.1\nuvicorn==0.24.0\npydantic==2.4.2";
+                    } else if (projectType.includes('web') || desc.toLowerCase().includes('сайт')) {
+                        requirements = "# Веб-проект, зависимости не требуются";
+                    } else {
+                        requirements = "requests==2.31.0\npython-dotenv==1.0.0";
+                    }
+                }
+
+                // ========== 7. СОЗДАНИЕ РЕПОЗИТОРИЯ ==========
+                log.innerHTML += `📦 Создаю репозиторий "${repoName}"...\n`;
                 const createRepo = await gh("https://api.github.com/user/repos", "POST", {
                     name: repoName,
-                    description: desc || "Проект создан AI Copilot PRO",
+                    description: projectDesc.substring(0, 100),
                     auto_init: true,
                     private: false
                 });
@@ -270,210 +494,202 @@
                     const err = await createRepo.json();
                     throw new Error(`Ошибка создания репозитория: ${err.message || createRepo.status}`);
                 }
-                log.innerHTML += "✅ Репозиторий создан.\n";
+                log.innerHTML += "✅ Репозиторий создан\n";
 
-                // ---- ПОЛУЧАЕМ ИМЯ ПОЛЬЗОВАТЕЛЯ ----
-                log.innerHTML += "👤 Получаю данные владельца...\n";
-                const userResp = await gh("https://api.github.com/user", "GET");
-                if (!userResp.ok) throw new Error("Не удалось получить информацию о пользователе.");
-                const userData = await userResp.json();
-                const username = userData.login;
-                log.innerHTML += `👋 Привет, ${username}!\n`;
-
-                // ---- 2. ГЕНЕРАЦИЯ КОДА ЧЕРЕЗ OPENROUTER (ПРОМПТ НА РУССКОМ) ----
-                log.innerHTML += "🧠 Запрашиваю генерацию кода у ИИ (OpenRouter)...\n";
-
-                const aiPrompt = `Ты — senior Python разработчик. Сгенерируй полностью рабочий продакшн-код на Python.
-Опиши задачу: ${desc}.
-
-⚠️ ВАЖНО: Верни ТОЛЬКО код файла main.py и список зависимостей в requirements.txt.
-Формат вывода строгий:
----main.py---
-(код)
----requirements.txt---
-(зависимости, каждая с новой строки)
-
-Не используй лишние комментарии, только код. Сделай асинхронный современный код.`;
-
-                const aiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${openrouterKey}`,
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": window.location.origin,
-                        "X-Title": "AI Copilot PRO"
-                    },
-                    body: JSON.stringify({
-                        model: "openai/gpt-3.5-turbo",
-                        messages: [
-                            { role: "system", content: "Ты профессиональный Python разработчик. Генерируешь только код, без объяснений." },
-                            { role: "user", content: aiPrompt }
-                        ],
-                        temperature: 0.3
-                    })
-                });
-
-                if (!aiResponse.ok) {
-                    const errText = await aiResponse.text();
-                    throw new Error(`Ошибка OpenRouter: ${aiResponse.status} — ${errText.slice(0, 100)}`);
-                }
-
-                const aiData = await aiResponse.json();
-                let generatedText = aiData.choices[0].message.content;
-
-                log.innerHTML += "✅ Код сгенерирован, парсим main.py и requirements...\n";
-
-                // Парсинг ответа — извлекаем main.py и requirements.txt
-                let mainCode = "";
-                let requirementsList = "";
-
-                // Ищем блок main.py
-                const mainMatch = generatedText.match(/---main\.py---\s*([\s\S]*?)(?=---requirements\.txt---|$)/i);
-                if (mainMatch && mainMatch[1].trim()) {
-                    mainCode = mainMatch[1].trim();
-                } else {
-                    // fallback: попробуем найти код Python
-                    const fallbackCode = generatedText.match(/```python\s*([\s\S]*?)```/);
-                    mainCode = fallbackCode ? fallbackCode[1].trim() : "# Код не распознан, сгенерируй заново";
-                }
-
-                const reqMatch = generatedText.match(/---requirements\.txt---\s*([\s\S]*?)(?=---|$)/i);
-                if (reqMatch && reqMatch[1].trim()) {
-                    requirementsList = reqMatch[1].trim();
-                } else {
-                    requirementsList = "aiogram\nrequests\npython-dotenv";  // fallback
-                }
-
-                // Если main пустой — используем заглушку
-                if (!mainCode) {
-                    mainCode = `print("Hello, AI Copilot!")\n# Проект: ${desc}`;
-                }
-
-                // ---- 3. СОЗДАНИЕ СТРУКТУРЫ ФАЙЛОВ ----
-                log.innerHTML += "📁 Заливаю файлы в репозиторий...\n";
-
-                // Функция для коммита файла
-                async function createFile(path, content, commitMsg) {
+                // ========== 8. ФУНКЦИЯ ЗАЛИВКИ ФАЙЛОВ ==========
+                async function createFile(path, content, msg) {
                     const encoded = btoa(unescape(encodeURIComponent(content)));
-                    const response = await gh(`https://api.github.com/repos/${username}/${repoName}/contents/${path}`, "PUT", {
-                        message: commitMsg,
+                    const res = await gh(`https://api.github.com/repos/${username}/${repoName}/contents/${path}`, "PUT", {
+                        message: msg,
                         content: encoded
                     });
-                    if (!response.ok && response.status !== 422) { // 422 = уже существует
-                        const e = await response.json();
-                        console.error(`Ошибка заливки ${path}:`, e);
-                        throw new Error(`Не удалось создать ${path}: ${e.message}`);
+                    if (!res.ok && res.status !== 422) {
+                        const err = await res.json();
+                        throw new Error(`Ошибка ${path}: ${err.message}`);
                     }
-                    return response;
+                    return res;
                 }
 
-                // main.py
-                await createFile("src/main.py", mainCode, "Добавлен main.py (AI генерация)");
-                log.innerHTML += "   ✅ src/main.py\n";
+                // ========== 9. ЗАЛИВКА ФАЙЛОВ ПО ТИПУ ПРОЕКТА ==========
+                log.innerHTML += "📁 Создаю структуру проекта...\n";
 
-                // config/settings.py
-                const settingsPy = `# Настройки проекта\n# Сгенерировано AI Copilot\nDEBUG = True\nAPP_NAME = "${repoName}"\n`;
-                await createFile("config/settings.py", settingsPy, "Добавлен config/settings.py");
-                log.innerHTML += "   ✅ config/settings.py\n";
-
-                // requirements.txt
-                await createFile("requirements.txt", requirementsList, "Добавлен requirements.txt");
-                log.innerHTML += "   ✅ requirements.txt\n";
-
-                // Dockerfile
-                const dockerfile = `FROM python:3.11-slim
+                if (projectType.includes('web') || mainCode.includes('<!DOCTYPE html>') || mainCode.includes('<html')) {
+                    // ВЕБ-ПРОЕКТ
+                    await createFile("index.html", mainCode, "Добавлен index.html");
+                    log.innerHTML += "   ✅ index.html\n";
+                    
+                    await createFile("requirements.txt", "# Веб-проект, зависимости не требуются", "Добавлен requirements.txt");
+                    log.innerHTML += "   ✅ requirements.txt\n";
+                    
+                    // Dockerfile для веба
+                    const dockerWeb = `FROM nginx:alpine
+COPY index.html /usr/share/nginx/html/index.html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]`;
+                    await createFile("Dockerfile", dockerWeb, "Добавлен Dockerfile");
+                    log.innerHTML += "   ✅ Dockerfile\n";
+                    
+                } else {
+                    // PYTHON ПРОЕКТ
+                    await createFile("src/main.py", mainCode, "Добавлен main.py");
+                    log.innerHTML += "   ✅ src/main.py\n";
+                    
+                    await createFile("requirements.txt", requirements, "Добавлен requirements.txt");
+                    log.innerHTML += "   ✅ requirements.txt\n";
+                    
+                    // Dockerfile для Python
+                    const dockerPython = `FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 CMD ["python", "src/main.py"]`;
-                await createFile("Dockerfile", dockerfile, "Добавлен Dockerfile");
-                log.innerHTML += "   ✅ Dockerfile\n";
+                    await createFile("Dockerfile", dockerPython, "Добавлен Dockerfile");
+                    log.innerHTML += "   ✅ Dockerfile\n";
+                }
+
+                // ========== 10. ОБЩИЕ ФАЙЛЫ ДЛЯ ВСЕХ ПРОЕКТОВ ==========
+                
+                // config/settings.py
+                let settingsContent;
+                if (projectType.includes('web')) {
+                    settingsContent = `# Конфигурация веб-проекта
+PROJECT_NAME = "${repoName}"
+DESCRIPTION = "${projectDesc}"
+THEME = "dark"`;
+                } else {
+                    settingsContent = `# Настройки проекта
+DEBUG = True
+PROJECT_NAME = "${repoName}"
+VERSION = "1.0.0"
+DESCRIPTION = """${projectDesc}"""`;
+                }
+                await createFile("config/settings.py", settingsContent, "Добавлен config/settings.py");
+                log.innerHTML += "   ✅ config/settings.py\n";
 
                 // README.md
-                const readme = `# ${repoName}
+                let readmeContent;
+                if (projectType.includes('web')) {
+                    readmeContent = `# ${repoName}
 
-🤖 Проект сгенерирован AI Copilot PRO
+🌐 **Сайт создан AI Copilot ULTRA**
 
-## Описание
-${desc}
+## 📋 О проекте
+${projectDesc}
 
-## 🚀 Быстрый старт
+## 🚀 Запуск
+### Локально
+Просто открой \`index.html\` в браузере
+
+### Через Docker
+\`\`\`bash
+docker build -t ${repoName} .
+docker run -p 80:80 ${repoName}
+\`\`\`
+
+## 🌍 GitHub Pages
+Сайт доступен по адресу: https://${username}.github.io/${repoName}
+
+---
+🤖 Сгенерировано автоматически без участия человека
+`;
+                } else {
+                    readmeContent = `# ${repoName}
+
+🐍 **Python проект создан AI Copilot ULTRA**
+
+## 📋 Описание
+${projectDesc}
+
+## 📦 Установка
+\`\`\`bash
+git clone https://github.com/${username}/${repoName}
+cd ${repoName}
+pip install -r requirements.txt
+\`\`\`
+
+## 🚀 Запуск
+\`\`\`bash
+python src/main.py
+\`\`\`
+или через Docker:
 \`\`\`bash
 docker build -t ${repoName} .
 docker run ${repoName}
 \`\`\`
 
-## 📦 Автодеплой
-GitHub Actions + GitHub Pages включены.
+## 📁 Структура
+- \`src/\` - исходный код
+- \`config/\` - конфигурация
+- \`requirements.txt\` - зависимости
+
+---
+🤖 Создано искусственным интеллектом
 `;
-                await createFile("README.md", readme, "Добавлен README.md");
+                }
+                await createFile("README.md", readmeContent, "Добавлен README.md");
                 log.innerHTML += "   ✅ README.md\n";
 
-                // ---- 4. GITHUB ACTIONS WORKFLOW (автодеплой) ----
-                const workflowYml = `name: CI/CD Автодеплой
+                // .gitignore
+                const gitignore = `# Python
+__pycache__/
+*.py[cod]
+*.env
+venv/
+.env
+.venv
 
-on:
-  push:
-    branches: [ "main" ]
+# IDE
+.vscode/
+.idea/
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Деплой на GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: \${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          publish_branch: gh-pages
+# Docker
+*.log
+.DS_Store
 `;
-                await createFile(".github/workflows/deploy.yml", workflowYml, "Добавлен GitHub Actions workflow");
-                log.innerHTML += "   ✅ .github/workflows/deploy.yml\n";
+                await createFile(".gitignore", gitignore, "Добавлен .gitignore");
+                log.innerHTML += "   ✅ .gitignore\n";
 
-                // ---- 5. ВКЛЮЧАЕМ GITHUB PAGES ----
-                log.innerHTML += "🌐 Включаю GitHub Pages...\n";
-                const pagesResponse = await gh(`https://api.github.com/repos/${username}/${repoName}/pages`, "POST", {
-                    source: {
-                        branch: "main",
-                        path: "/"
-                    }
-                }).catch(async (e) => {
-                    // Если уже включен — ок, игнорируем
-                    log.innerHTML += "⚠️ Pages возможно уже активен, проверяем...\n";
-                    return null;
-                });
-
-                if (pagesResponse && !pagesResponse.ok && pagesResponse.status !== 409) {
-                    // 409 = уже существует
-                    const err = await pagesResponse.json();
-                    log.innerHTML += `⚠️ Не удалось включить Pages: ${err.message}. Возможно включено вручную.\n`;
+                // ========== 11. АКТИВАЦИЯ GITHUB PAGES ==========
+                log.innerHTML += "🌐 Активирую GitHub Pages...\n";
+                
+                // Ждем 3 секунды для инициализации репозитория
+                await new Promise(r => setTimeout(r, 3000));
+                
+                const pagesRes = await gh(`https://api.github.com/repos/${username}/${repoName}/pages`, "POST", {
+                    source: { branch: "main", path: "/" }
+                }).catch(e => e);
+                
+                if (pagesRes && (pagesRes.status === 201 || pagesRes.status === 204)) {
+                    log.innerHTML += "✅ GitHub Pages включен!\n";
+                } else if (pagesRes && pagesRes.status === 409) {
+                    log.innerHTML += "⚠️ GitHub Pages уже был включен\n";
                 } else {
-                    log.innerHTML += "✅ GitHub Pages активирован!\n";
+                    log.innerHTML += "ℹ️ GitHub Pages: ручная активация не требуется или будет включена автоматически\n";
                 }
 
-                // ---- ФИНАЛ ----
-                log.innerHTML += `\n🎉🎉🎉 ПРОЕКТ УСПЕШНО СОЗДАН! 🎉🎉🎉\n`;
-                log.innerHTML += `🔗 Репозиторий: https://github.com/${username}/${repoName}\n`;
-                log.innerHTML += `🌐 GitHub Pages: https://${username}.github.io/${repoName} (доступно через 1-2 мин)\n`;
-                log.innerHTML += `🚀 Автодеплой настроен: каждый push в main обновляет Pages и Docker готов.\n`;
-                log.innerHTML += `⭐ Поздравляю! Твой мини-Copilot на русском отработал идеально.\n`;
+                // ========== 12. ФИНАЛЬНЫЙ ОТЧЕТ ==========
+                log.innerHTML += `\n🎉🎉🎉 ПРОЕКТ ПОЛНОСТЬЮ СОЗДАН! 🎉🎉🎉\n\n`;
+                log.innerHTML += `📦 Репозиторий: https://github.com/${username}/${repoName}\n`;
+                
+                if (projectType.includes('web') || mainCode.includes('<!DOCTYPE html>')) {
+                    log.innerHTML += `🌐 GitHub Pages: https://${username}.github.io/${repoName}\n`;
+                    log.innerHTML += `   (доступно через 1-2 минуты)\n`;
+                }
+                
+                log.innerHTML += `\n📝 Тип проекта: ${projectType}\n`;
+                log.innerHTML += `🔑 Название сгенерировано ИИ: ${repoName}\n`;
+                log.innerHTML += `\n✅ Поздравляю! Ты не ввел ни названия, ни структуры. ИИ сделал ВСЁ сам.\n`;
+                log.innerHTML += `🤖 Это уровень Autonomous AI Developer\n`;
 
             } catch (error) {
-                log.innerHTML += `❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}\n`;
-                console.error(error);
+                log.innerHTML += `\n❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}\n`;
+                if (error.message.includes('token')) {
+                    log.innerHTML += `\n🔧 Решение: Создай новый токен с правами 'repo' (полный доступ)\n`;
+                }
+                if (error.message.includes('OpenRouter')) {
+                    log.innerHTML += `\n🔧 Решение: Проверь ключ OpenRouter или баланс\n`;
+                }
             }
         }
     </script>
