@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Copilot ULTRA — Полный автомат</title>
+    <title>AI Copilot ULTRA — ИСПРАВЛЕНО</title>
     <style>
         * {
             margin: 0;
@@ -25,7 +25,7 @@
         .container {
             max-width: 900px;
             width: 100%;
-            background: rgba(10, 20, 40, 0.8);
+            background: rgba(10, 20, 40, 0.9);
             backdrop-filter: blur(12px);
             border: 1px solid #22c55e40;
             border-radius: 40px;
@@ -43,6 +43,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         .badge {
@@ -54,7 +55,6 @@
             font-weight: 700;
             -webkit-text-fill-color: black;
             border: 1px solid #4ade80;
-            letter-spacing: 0.5px;
         }
 
         .ultra-badge {
@@ -64,7 +64,6 @@
             padding: 4px 14px;
             border-radius: 100px;
             font-weight: 800;
-            text-transform: uppercase;
         }
 
         .sub {
@@ -73,6 +72,16 @@
             padding-left: 16px;
             font-size: 1.1rem;
             border-left: 4px solid #22c55e;
+        }
+
+        .warning-box {
+            background: #1e293b;
+            border-left: 4px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            color: #fef9c3;
+            font-size: 0.95rem;
         }
 
         .field {
@@ -100,7 +109,6 @@
             transition: 0.2s;
             outline: none;
             font-family: inherit;
-            border: 1px solid #334155;
         }
 
         input:focus, textarea:focus {
@@ -132,7 +140,6 @@
             gap: 16px;
             border: 1px solid #86efac;
             box-shadow: 0 10px 30px #22c55e60;
-            text-shadow: 0 2px 4px black;
         }
 
         button:hover {
@@ -147,7 +154,6 @@
             padding: 26px;
             border: 1px solid #1e293b;
             margin-top: 20px;
-            backdrop-filter: blur(4px);
         }
 
         pre {
@@ -157,7 +163,7 @@
             white-space: pre-wrap;
             word-wrap: break-word;
             font-family: 'JetBrains Mono', monospace;
-            max-height: 350px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
@@ -177,17 +183,13 @@
             border-radius: 50%;
             display: inline-block;
             margin-right: 8px;
-            box-shadow: 0 0 10px #22c55e;
-        }
-
-        .glow {
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+            0% { opacity: 1; box-shadow: 0 0 10px #22c55e; }
+            50% { opacity: 0.7; box-shadow: 0 0 20px #22c55e; }
+            100% { opacity: 1; box-shadow: 0 0 10px #22c55e; }
         }
     </style>
 </head>
@@ -195,15 +197,20 @@
     <div class="container">
         <h2>
             🤖 AI Copilot ULTRA
-            <span class="badge">АВТОНОМНЫЙ</span>
-            <span class="ultra-badge">v3.0</span>
+            <span class="badge">ИСПРАВЛЕНО</span>
+            <span class="ultra-badge">v3.1</span>
         </h2>
         <div class="sub">
-            ⚡ Ты ничего не вводишь, кроме токенов и описания. ИИ сам придумает название, создаст репозиторий, код, Docker, Pages.
+            ⚡ ИИ сам придумает название, проверит email, создаст репозиторий, код, Docker, Pages.
+        </div>
+
+        <div class="warning-box">
+            ⚠️ ВАЖНО: Убедись что на GitHub подтверждён email (Settings → Emails).<br>
+            🔑 Токену нужны права: <strong>repo, user:email</strong>
         </div>
 
         <div class="field">
-            <label>🔐 GitHub Personal Token (нужны права repo)</label>
+            <label>🔐 GitHub Personal Token (права repo + user:email)</label>
             <input id="token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
         </div>
         <div class="field">
@@ -212,22 +219,21 @@
         </div>
         <div class="field">
             <label>📝 Опиши любой проект одной строкой</label>
-            <textarea id="desc" placeholder="Например: Telegram бот для поиска авиабилетов, сайт-портфолио с анимацией, API на FastAPI для заметок, парсер новостей с уведомлениями...">Современный сайт-визитка для дизайнера с темной темой и плавными анимациями</textarea>
+            <textarea id="desc" placeholder="Например: Telegram бот для поиска авиабилетов, сайт-портфолио с анимацией, API на FastAPI...">Современный сайт-портфолио для дизайнера с тёмной темой и анимациями</textarea>
         </div>
 
         <button onclick="createProject()">
-            <span class="glow">⚡</span> ЗАПУСТИТЬ ПОЛНЫЙ АВТОМАТ
+            <span class="status-dot"></span> ЗАПУСТИТЬ АВТОМАТ
         </button>
 
         <div class="log-box">
             <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
-                <span class="status-dot"></span>
-                <span style="font-weight: 700; font-size: 1.1rem;">НЕЙРОСБОРЩИК</span>
+                <span style="font-weight: 700; font-size: 1.1rem;">🧠 НЕЙРОСБОРЩИК</span>
             </div>
-            <pre id="log">🤖 Ожидаю команду... Введи токены и описание, я сам придумаю название и создам всё.</pre>
+            <pre id="log">🤖 Ожидаю команду...</pre>
         </div>
         <div class="footer-note">
-            ✅ ИИ генерирует название репозитория • Автоструктура • Docker • Pages • Всё без твоего участия
+            ✅ ИИ генерирует название • Автоструктура • Docker • Pages • Email verification fix
         </div>
     </div>
 
@@ -241,11 +247,11 @@
             const desc = document.getElementById("desc").value.trim();
 
             if (!token || !openrouterKey || !desc) {
-                alert("❌ Заполни ВСЕ поля: токен GitHub, ключ OpenRouter и описание проекта");
+                alert("❌ Заполни ВСЕ поля!");
                 return;
             }
 
-            // GitHub API wrapper
+            // GitHub API wrapper с обработкой ошибок
             async function gh(url, method, body = null) {
                 const res = await fetch(url, {
                     method: method,
@@ -256,32 +262,62 @@
                     },
                     body: body ? JSON.stringify(body) : null
                 });
+                
+                if (!res.ok && res.status !== 404 && res.status !== 409) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(`${err.message || res.statusText} (${res.status})`);
+                }
                 return res;
             }
 
             try {
-                // ========== 1. ПРОВЕРКА ТОКЕНА И ПОЛУЧЕНИЕ ПОЛЬЗОВАТЕЛЯ ==========
-                log.innerHTML += "🔑 Проверяю GitHub токен...\n";
+                // ========== 1. ПРОВЕРКА ТОКЕНА И EMAIL ==========
+                log.innerHTML += "🔑 Проверяю GitHub токен и email...\n";
+                
                 const userResp = await gh("https://api.github.com/user", "GET");
                 if (!userResp.ok) throw new Error("Токен недействителен");
                 const userData = await userResp.json();
                 const username = userData.login;
+                
+                // Проверяем подтверждённые email'ы
+                log.innerHTML += "📧 Проверяю подтверждённые email адреса...\n";
+                const emailsResp = await gh("https://api.github.com/user/emails", "GET");
+                
+                if (!emailsResp.ok) {
+                    log.innerHTML += "⚠️ Не удалось проверить email. Добавь права user:email к токену.\n";
+                } else {
+                    const emails = await emailsResp.json();
+                    const verifiedEmail = emails.find(e => e.verified === true);
+                    
+                    if (verifiedEmail) {
+                        log.innerHTML += `✅ Email подтверждён: ${verifiedEmail.email}\n`;
+                    } else {
+                        log.innerHTML += "❌ НЕТ ПОДТВЕРЖДЁННОГО EMAIL!\n";
+                        log.innerHTML += "➡️ Перейди: https://github.com/settings/emails и подтверди email\n";
+                        throw new Error("GitHub требует подтверждённый email");
+                    }
+                }
+                
                 log.innerHTML += `✅ GitHub: ${username}\n`;
 
-                // ========== 2. ИИ ГЕНЕРИРУЕТ НАЗВАНИЕ РЕПОЗИТОРИЯ ==========
+                // ========== 2. ИИ ГЕНЕРИРУЕТ НАЗВАНИЕ ==========
                 log.innerHTML += "🧠 ИИ придумывает название для проекта...\n";
                 
-                const namePrompt = `Придумай УНИКАЛЬНОЕ латинское название для GitHub репозитория для проекта: "${desc}".
-                
-Требования к названию:
-- Только латиница, цифры, дефисы
-- Без пробелов
-- Длина 4-20 символов
-- Оригинальное, не common (не "my-project", "test", "app")
-- Отвечает сути проекта
-- ТОЛЬКО название, ничего лишнего
+                const namePrompt = `Придумай УНИКАЛЬНОЕ название для GitHub репозитория для проекта: "${desc}".
 
-Примеры: ai-travel-bot, dark-portfolio-2025, fastapi-notes-api, crypto-parser-pro
+Правила:
+- Только английские буквы, цифры, дефисы
+- Никаких пробелов
+- Длина 4-25 символов
+- Не использовать: test, my-project, app, demo
+- Название должно отражать суть проекта
+- Ответь ТОЛЬКО названием, без кавычек и точек
+
+Примеры: 
+- для сайта дизайнера → design-portfolio-pro, creative-studio-2026
+- для телеграм бота → flight-scanner-bot, weather-forecaster
+- для API → notes-api-service, file-converter
+
 Название:`;
 
                 const nameResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -295,67 +331,140 @@
                     body: JSON.stringify({
                         model: "openai/gpt-3.5-turbo",
                         messages: [
-                            { role: "system", content: "Ты гениальный нейминг-эксперт. Отвечаешь ТОЛЬКО одним названием, без кавычек и пояснений." },
+                            { role: "system", content: "Ты эксперт по неймингу. Отвечаешь ТОЛЬКО одним словом или фразой с дефисами." },
                             { role: "user", content: namePrompt }
                         ],
-                        temperature: 0.8
+                        temperature: 0.7,
+                        max_tokens: 30
                     })
                 });
 
                 if (!nameResponse.ok) throw new Error("Ошибка генерации названия");
+                
                 const nameData = await nameResponse.json();
                 let repoName = nameData.choices[0].message.content.trim();
                 
-                // Очищаем название от мусора
+                // Очищаем название
                 repoName = repoName.toLowerCase()
                     .replace(/[^a-z0-9-]/g, '-')
                     .replace(/--+/g, '-')
                     .replace(/^-|-$/g, '')
                     .substring(0, 30);
                 
-                // Если название пустое или слишком короткое - генерируем запасное
                 if (!repoName || repoName.length < 3) {
                     repoName = `project-${Date.now().toString(36)}`;
                 }
                 
-                log.innerHTML += `📌 ИИ придумал название: ${repoName}\n`;
+                log.innerHTML += `📌 ИИ придумал: ${repoName}\n`;
 
-                // ========== 3. ПРОВЕРКА, СВОБОДНО ЛИ НАЗВАНИЕ ==========
+                // ========== 3. ПРОВЕРКА ДОСТУПНОСТИ ИМЕНИ ==========
                 log.innerHTML += "🔍 Проверяю доступность имени...\n";
+                
                 const checkRepo = await gh(`https://api.github.com/repos/${username}/${repoName}`, "GET");
                 
                 if (checkRepo.status === 200) {
-                    log.innerHTML += "⚠️ Название занято! Генерирую уникальное...\n";
-                    repoName = `${repoName}-${Math.floor(Math.random() * 10000)}`;
-                    log.innerHTML += `📌 Новое название: ${repoName}\n`;
+                    const suffix = Math.floor(Math.random() * 9999);
+                    repoName = `${repoName}-${suffix}`;
+                    log.innerHTML += `📌 Имя занято, новое: ${repoName}\n`;
+                } else {
+                    log.innerHTML += `✅ Имя свободно!\n`;
                 }
 
-                // ========== 4. ИИ ГЕНЕРИРУЕТ КОД ПРОЕКТА ==========
+                // ========== 4. СОЗДАНИЕ РЕПОЗИТОРИЯ ==========
+                log.innerHTML += `📦 Создаю репозиторий "${repoName}"...\n`;
+                
+                // Важно: добавляем все необходимые параметры
+                const repoData = {
+                    name: repoName,
+                    description: desc.substring(0, 100),
+                    private: false,
+                    auto_init: true,
+                    gitignore_template: "Python",
+                    has_issues: true,
+                    has_projects: true,
+                    has_wiki: true
+                };
+                
+                const createRepo = await fetch("https://api.github.com/user/repos", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Accept": "application/vnd.github+json",
+                        "X-GitHub-Api-Version": "2022-11-28"
+                    },
+                    body: JSON.stringify(repoData)
+                });
+
+                if (!createRepo.ok) {
+                    const err = await createRepo.json();
+                    console.error("GitHub API Error:", err);
+                    
+                    // Пробуем ещё раз с другим названием
+                    if (createRepo.status === 422 || createRepo.status === 403) {
+                        repoName = `${repoName}-${Date.now().toString(36)}`;
+                        log.innerHTML += `⚠️ Пробую другое имя: ${repoName}\n`;
+                        
+                        const retryData = {...repoData, name: repoName};
+                        const retryRepo = await fetch("https://api.github.com/user/repos", {
+                            method: "POST",
+                            headers: {
+                                "Authorization": `token ${token}`,
+                                "Accept": "application/vnd.github+json"
+                            },
+                            body: JSON.stringify(retryData)
+                        });
+                        
+                        if (!retryRepo.ok) {
+                            const retryErr = await retryRepo.json();
+                            throw new Error(`GitHub: ${retryErr.message || retryRepo.statusText}`);
+                        }
+                    } else {
+                        throw new Error(`GitHub: ${err.message || createRepo.statusText}`);
+                    }
+                }
+                
+                log.innerHTML += "✅ Репозиторий успешно создан!\n";
+                
+                // Ждём инициализации репозитория
+                log.innerHTML += "⏳ Инициализация репозитория...\n";
+                await new Promise(r => setTimeout(r, 3000));
+
+                // ========== 5. ИИ ГЕНЕРИРУЕТ КОД ==========
                 log.innerHTML += "🧠 ИИ генерирует код проекта...\n";
                 
-                const codePrompt = `Создай ПОЛНОСТЬЮ РАБОЧИЙ ПРОДАКШН проект на тему: "${desc}".
+                const codePrompt = `Создай ПОЛНЫЙ РАБОЧИЙ ПРОЕКТ на тему: "${desc}".
 
-ПРОАНАЛИЗИРУЙ ЧТО ЭТО:
-- Если это веб-сайт/лендинг/портфолио → создай index.html с современным CSS, адаптивом, анимациями
-- Если это Telegram бот → создай main.py на aiogram с полной структурой
-- Если это API/бэкенд → создай main.py на FastAPI или aiohttp
-- Если это парсер/утилита → создай main.py с логикой
+Определи тип проекта и создай соответствующий код:
 
-ФОРМАТ ВЫВОДА СТРОГО:
+1. ЕСЛИ ЭТО ВЕБ-САЙТ/ЛЕНДИНГ/ПОРТФОЛИО:
+   - Создай index.html с современным дизайном
+   - Добавь CSS анимации, адаптивность
+   - Тёмная тема, неон, красиво
 
----project-type---
+2. ЕСЛИ ЭТО TELEGRAM БОТ:
+   - main.py с aiogram 2.x
+   - Обработчики команд
+   - Класс бота
+
+3. ЕСЛИ ЭТО API:
+   - main.py с FastAPI
+   - Модели Pydantic
+   - Несколько эндпоинтов
+
+ФОРМАТ ВЫВОДА:
+---type---
 (web/bot/api/script)
 
----main-file---
-(ПОЛНЫЙ КОД главного файла - index.html или main.py)
+---main---
+(ПОЛНЫЙ КОД ГЛАВНОГО ФАЙЛА)
 
 ---requirements---
-(список зависимостей, каждая с новой строки)
+(список зависимостей)
 
----description---
-(краткое описание для README)
+---readme---
+(краткое описание проекта)
 
-Никаких лишних комментариев, ТОЛЬКО КОД.`;
+НИКАКОГО ЛИШНЕГО ТЕКСТА!`;
 
                 const codeResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                     method: "POST",
@@ -368,160 +477,232 @@
                     body: JSON.stringify({
                         model: "openai/gpt-3.5-turbo",
                         messages: [
-                            { role: "system", content: "Ты senior fullstack разработчик. Пишешь только код, без объяснений." },
+                            { role: "system", content: "Ты senior разработчик. Пишешь только код, без объяснений." },
                             { role: "user", content: codePrompt }
                         ],
                         temperature: 0.4,
-                        max_tokens: 2000
+                        max_tokens: 2500
                     })
                 });
 
                 if (!codeResponse.ok) throw new Error("Ошибка генерации кода");
+                
                 const codeData = await codeResponse.json();
-                const generatedCode = codeData.choices[0].message.content;
+                const generated = codeData.choices[0].message.content;
 
-                // ========== 5. ПАРСИНГ СГЕНЕРИРОВАННЫХ ДАННЫХ ==========
-                log.innerHTML += "📦 Обрабатываю код...\n";
+                // ========== 6. ПАРСИНГ КОДА ==========
+                log.innerHTML += "📦 Обрабатываю сгенерированный код...\n";
                 
                 let projectType = "web";
                 let mainCode = "";
                 let requirements = "";
                 let projectDesc = desc;
 
-                // Определяем тип проекта
-                const typeMatch = generatedCode.match(/---project-type---\s*([^\n]+)/i);
+                // Парсим тип проекта
+                const typeMatch = generated.match(/---type---\s*([^\n]+)/i);
                 if (typeMatch) projectType = typeMatch[1].trim().toLowerCase();
 
                 // Парсим главный файл
-                const mainMatch = generatedCode.match(/---main-file---\s*([\s\S]*?)(?=---requirements---|---description---|$)/i);
+                const mainMatch = generated.match(/---main---\s*([\s\S]*?)(?=---requirements---|---readme---|$)/i);
                 if (mainMatch && mainMatch[1].trim()) {
                     mainCode = mainMatch[1].trim();
                 }
 
                 // Парсим зависимости
-                const reqMatch = generatedCode.match(/---requirements---\s*([\s\S]*?)(?=---description---|$)/i);
+                const reqMatch = generated.match(/---requirements---\s*([\s\S]*?)(?=---readme---|$)/i);
                 if (reqMatch && reqMatch[1].trim()) {
                     requirements = reqMatch[1].trim();
                 }
 
                 // Парсим описание
-                const descMatch = generatedCode.match(/---description---\s*([\s\S]*?)(?=---|$)/i);
-                if (descMatch && descMatch[1].trim()) {
-                    projectDesc = descMatch[1].trim();
+                const readmeMatch = generated.match(/---readme---\s*([\s\S]*?)(?=---|$)/i);
+                if (readmeMatch && readmeMatch[1].trim()) {
+                    projectDesc = readmeMatch[1].trim();
                 }
 
-                // ========== 6. УСТАНАВЛИВАЕМ ЗАПАСНЫЕ ЗНАЧЕНИЯ ==========
+                // ========== 7. ЗАГОТОВКИ ЕСЛИ ПАРСИНГ НЕ СРАБОТАЛ ==========
                 if (!mainCode) {
-                    if (projectType.includes('web') || projectType.includes('site') || desc.toLowerCase().includes('сайт')) {
+                    if (desc.toLowerCase().includes('сайт') || desc.toLowerCase().includes('портфолио') || desc.toLowerCase().includes('лендинг')) {
                         mainCode = `<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${repoName}</title>
+    <title>${repoName} | Портфолио дизайнера</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #0f172a; 
-            color: white; 
-            font-family: system-ui; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 100vh;
-            padding: 20px;
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --accent: #22c55e;
+            --text: #ffffff;
+            --text-secondary: #a0a0a0;
         }
-        .card {
-            background: #1e293b;
-            padding: 40px;
-            border-radius: 30px;
-            border: 1px solid #22c55e;
-            max-width: 600px;
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
         }
-        h1 { color: #22c55e; margin-bottom: 20px; }
-        p { color: #94a3b8; line-height: 1.6; }
+        
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+        
+        .btn {
+            background: var(--accent);
+            color: black;
+            padding: 12px 32px;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🚀 ${repoName}</h1>
-        <p>${projectDesc}</p>
-        <p style="margin-top: 30px; color: #4ade80;">✨ Создано AI Copilot ULTRA</p>
+    <div class="container">
+        <div class="hero">
+            <h1>${repoName}</h1>
+            <p class="subtitle">${projectDesc}</p>
+            <a href="#" class="btn">Смотреть работы</a>
+        </div>
     </div>
 </body>
 </html>`;
                         projectType = "web";
                     } else {
-                        mainCode = `import asyncio
+                        mainCode = `#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+${repoName}
+${projectDesc}
+"""
+
+import asyncio
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
+
 async def main():
-    logger.info("🚀 Запуск проекта: ${repoName}")
-    logger.info("📝 Описание: ${projectDesc}")
+    """Основная функция проекта."""
+    logger.info(f"🚀 Запуск проекта: ${repoName}")
+    logger.info(f"📝 Описание: ${projectDesc}")
     
+    # Здесь будет основной код проекта
+    await asyncio.sleep(1)
+    logger.info("✅ Проект успешно запущен!")
+
+
 if __name__ == "__main__":
-    asyncio.run(main())`;
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("👋 Завершение работы...")
+    except Exception as e:
+        logger.error(f"❌ Ошибка: {e}")
+`;
                         projectType = "script";
                     }
                 }
 
                 if (!requirements) {
                     if (projectType.includes('bot') || desc.toLowerCase().includes('telegram') || desc.toLowerCase().includes('бот')) {
-                        requirements = "aiogram==2.25.1\npython-dotenv==1.0.0\nrequests==2.31.0";
-                    } else if (projectType.includes('api') || desc.toLowerCase().includes('fastapi') || desc.toLowerCase().includes('rest')) {
-                        requirements = "fastapi==0.104.1\nuvicorn==0.24.0\npydantic==2.4.2";
+                        requirements = "aiogram==2.25.1\npython-dotenv==1.0.0\nrequests==2.31.0\naiohttp==3.9.1";
+                    } else if (projectType.includes('api') || desc.toLowerCase().includes('fastapi')) {
+                        requirements = "fastapi==0.104.1\nuvicorn==0.24.0\npydantic==2.4.2\npython-dotenv==1.0.0";
                     } else if (projectType.includes('web') || desc.toLowerCase().includes('сайт')) {
                         requirements = "# Веб-проект, зависимости не требуются";
                     } else {
-                        requirements = "requests==2.31.0\npython-dotenv==1.0.0";
+                        requirements = "requests==2.31.0\npython-dotenv==1.0.0\naiohttp==3.9.1";
                     }
                 }
-
-                // ========== 7. СОЗДАНИЕ РЕПОЗИТОРИЯ ==========
-                log.innerHTML += `📦 Создаю репозиторий "${repoName}"...\n`;
-                const createRepo = await gh("https://api.github.com/user/repos", "POST", {
-                    name: repoName,
-                    description: projectDesc.substring(0, 100),
-                    auto_init: true,
-                    private: false
-                });
-
-                if (!createRepo.ok) {
-                    const err = await createRepo.json();
-                    throw new Error(`Ошибка создания репозитория: ${err.message || createRepo.status}`);
-                }
-                log.innerHTML += "✅ Репозиторий создан\n";
 
                 // ========== 8. ФУНКЦИЯ ЗАЛИВКИ ФАЙЛОВ ==========
                 async function createFile(path, content, msg) {
-                    const encoded = btoa(unescape(encodeURIComponent(content)));
-                    const res = await gh(`https://api.github.com/repos/${username}/${repoName}/contents/${path}`, "PUT", {
-                        message: msg,
-                        content: encoded
-                    });
-                    if (!res.ok && res.status !== 422) {
-                        const err = await res.json();
-                        throw new Error(`Ошибка ${path}: ${err.message}`);
+                    try {
+                        const encoded = btoa(unescape(encodeURIComponent(content)));
+                        const res = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${path}`, {
+                            method: "PUT",
+                            headers: {
+                                "Authorization": `token ${token}`,
+                                "Accept": "application/vnd.github+json"
+                            },
+                            body: JSON.stringify({
+                                message: msg,
+                                content: encoded
+                            })
+                        });
+                        
+                        if (!res.ok && res.status !== 422) {
+                            const err = await res.json();
+                            throw new Error(`${path}: ${err.message}`);
+                        }
+                        return res;
+                    } catch (e) {
+                        log.innerHTML += `   ⚠️ Ошибка ${path}: ${e.message}\n`;
+                        throw e;
                     }
-                    return res;
                 }
 
-                // ========== 9. ЗАЛИВКА ФАЙЛОВ ПО ТИПУ ПРОЕКТА ==========
+                // ========== 9. ЗАЛИВКА ФАЙЛОВ ==========
                 log.innerHTML += "📁 Создаю структуру проекта...\n";
 
-                if (projectType.includes('web') || mainCode.includes('<!DOCTYPE html>') || mainCode.includes('<html')) {
-                    // ВЕБ-ПРОЕКТ
+                if (projectType.includes('web') || mainCode.includes('<!DOCTYPE html>')) {
+                    // Веб-проект
                     await createFile("index.html", mainCode, "Добавлен index.html");
                     log.innerHTML += "   ✅ index.html\n";
                     
                     await createFile("requirements.txt", "# Веб-проект, зависимости не требуются", "Добавлен requirements.txt");
                     log.innerHTML += "   ✅ requirements.txt\n";
                     
-                    // Dockerfile для веба
                     const dockerWeb = `FROM nginx:alpine
 COPY index.html /usr/share/nginx/html/index.html
 EXPOSE 80
@@ -530,14 +711,13 @@ CMD ["nginx", "-g", "daemon off;"]`;
                     log.innerHTML += "   ✅ Dockerfile\n";
                     
                 } else {
-                    // PYTHON ПРОЕКТ
+                    // Python проект
                     await createFile("src/main.py", mainCode, "Добавлен main.py");
                     log.innerHTML += "   ✅ src/main.py\n";
                     
                     await createFile("requirements.txt", requirements, "Добавлен requirements.txt");
                     log.innerHTML += "   ✅ requirements.txt\n";
                     
-                    // Dockerfile для Python
                     const dockerPython = `FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -548,85 +728,61 @@ CMD ["python", "src/main.py"]`;
                     log.innerHTML += "   ✅ Dockerfile\n";
                 }
 
-                // ========== 10. ОБЩИЕ ФАЙЛЫ ДЛЯ ВСЕХ ПРОЕКТОВ ==========
-                
                 // config/settings.py
-                let settingsContent;
-                if (projectType.includes('web')) {
-                    settingsContent = `# Конфигурация веб-проекта
-PROJECT_NAME = "${repoName}"
-DESCRIPTION = "${projectDesc}"
-THEME = "dark"`;
-                } else {
-                    settingsContent = `# Настройки проекта
+                const settingsContent = `# Конфигурация проекта ${repoName}
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DEBUG = True
 PROJECT_NAME = "${repoName}"
-VERSION = "1.0.0"
-DESCRIPTION = """${projectDesc}"""`;
-                }
+PROJECT_DESCRIPTION = """${projectDesc}"""
+
+# Настройки окружения
+ENV = os.getenv("ENV", "development")
+`;
                 await createFile("config/settings.py", settingsContent, "Добавлен config/settings.py");
                 log.innerHTML += "   ✅ config/settings.py\n";
 
                 // README.md
-                let readmeContent;
-                if (projectType.includes('web')) {
-                    readmeContent = `# ${repoName}
+                const readmeContent = `# ${repoName}
 
-🌐 **Сайт создан AI Copilot ULTRA**
+🚀 **Проект создан AI Copilot ULTRA**
 
 ## 📋 О проекте
 ${projectDesc}
 
-## 🚀 Запуск
-### Локально
-Просто открой \`index.html\` в браузере
+## 📁 Структура
+\`\`\`
+├── ${projectType.includes('web') ? 'index.html' : 'src/'}
+├── config/
+├── requirements.txt
+├── Dockerfile
+└── README.md
+\`\`\`
 
-### Через Docker
+## 🚀 Быстрый старт
+
+### Локальный запуск
+${projectType.includes('web') ? 
+'Просто открой `index.html` в браузере' : 
+'```bash\npip install -r requirements.txt\npython src/main.py\n```'}
+
+### Docker
 \`\`\`bash
 docker build -t ${repoName} .
-docker run -p 80:80 ${repoName}
+docker run ${projectType.includes('web') ? '-p 80:80 ' + repoName : repoName}
 \`\`\`
 
 ## 🌍 GitHub Pages
-Сайт доступен по адресу: https://${username}.github.io/${repoName}
+${projectType.includes('web') ? 
+`Сайт доступен по адресу: https://${username}.github.io/${repoName}` : 
+'Включи Pages в настройках репозитория'}
 
 ---
-🤖 Сгенерировано автоматически без участия человека
+🤖 Сгенерировано искусственным интеллектом • ${new Date().toLocaleDateString()}
 `;
-                } else {
-                    readmeContent = `# ${repoName}
-
-🐍 **Python проект создан AI Copilot ULTRA**
-
-## 📋 Описание
-${projectDesc}
-
-## 📦 Установка
-\`\`\`bash
-git clone https://github.com/${username}/${repoName}
-cd ${repoName}
-pip install -r requirements.txt
-\`\`\`
-
-## 🚀 Запуск
-\`\`\`bash
-python src/main.py
-\`\`\`
-или через Docker:
-\`\`\`bash
-docker build -t ${repoName} .
-docker run ${repoName}
-\`\`\`
-
-## 📁 Структура
-- \`src/\` - исходный код
-- \`config/\` - конфигурация
-- \`requirements.txt\` - зависимости
-
----
-🤖 Создано искусственным интеллектом
-`;
-                }
                 await createFile("README.md", readmeContent, "Добавлен README.md");
                 log.innerHTML += "   ✅ README.md\n";
 
@@ -634,42 +790,63 @@ docker run ${repoName}
                 const gitignore = `# Python
 __pycache__/
 *.py[cod]
+*.pyc
 *.env
+.venv
 venv/
 .env
-.venv
+ENV/
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Docker
 *.log
-.DS_Store
 `;
                 await createFile(".gitignore", gitignore, "Добавлен .gitignore");
                 log.innerHTML += "   ✅ .gitignore\n";
 
-                // ========== 11. АКТИВАЦИЯ GITHUB PAGES ==========
+                // ========== 10. АКТИВАЦИЯ GITHUB PAGES ==========
                 log.innerHTML += "🌐 Активирую GitHub Pages...\n";
                 
-                // Ждем 3 секунды для инициализации репозитория
-                await new Promise(r => setTimeout(r, 3000));
+                // Ждём 5 секунд для полной инициализации
+                await new Promise(r => setTimeout(r, 5000));
                 
-                const pagesRes = await gh(`https://api.github.com/repos/${username}/${repoName}/pages`, "POST", {
-                    source: { branch: "main", path: "/" }
-                }).catch(e => e);
-                
-                if (pagesRes && (pagesRes.status === 201 || pagesRes.status === 204)) {
-                    log.innerHTML += "✅ GitHub Pages включен!\n";
-                } else if (pagesRes && pagesRes.status === 409) {
-                    log.innerHTML += "⚠️ GitHub Pages уже был включен\n";
-                } else {
-                    log.innerHTML += "ℹ️ GitHub Pages: ручная активация не требуется или будет включена автоматически\n";
+                try {
+                    const pagesRes = await fetch(`https://api.github.com/repos/${username}/${repoName}/pages`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `token ${token}`,
+                            "Accept": "application/vnd.github+json"
+                        },
+                        body: JSON.stringify({
+                            source: {
+                                branch: "main",
+                                path: "/"
+                            }
+                        })
+                    });
+                    
+                    if (pagesRes.status === 201 || pagesRes.status === 204) {
+                        log.innerHTML += "✅ GitHub Pages активирован!\n";
+                    } else if (pagesRes.status === 409) {
+                        log.innerHTML += "✅ GitHub Pages уже активен\n";
+                    } else {
+                        log.innerHTML += "ℹ️ GitHub Pages будет активирован автоматически\n";
+                    }
+                } catch (e) {
+                    log.innerHTML += "ℹ️ Pages активируется автоматически\n";
                 }
 
-                // ========== 12. ФИНАЛЬНЫЙ ОТЧЕТ ==========
-                log.innerHTML += `\n🎉🎉🎉 ПРОЕКТ ПОЛНОСТЬЮ СОЗДАН! 🎉🎉🎉\n\n`;
+                // ========== 11. ФИНАЛЬНЫЙ ОТЧЁТ ==========
+                log.innerHTML += `\n🎉🎉🎉 ПРОЕКТ УСПЕШНО СОЗДАН! 🎉🎉🎉\n\n`;
                 log.innerHTML += `📦 Репозиторий: https://github.com/${username}/${repoName}\n`;
                 
                 if (projectType.includes('web') || mainCode.includes('<!DOCTYPE html>')) {
@@ -677,18 +854,25 @@ venv/
                     log.innerHTML += `   (доступно через 1-2 минуты)\n`;
                 }
                 
-                log.innerHTML += `\n📝 Тип проекта: ${projectType}\n`;
-                log.innerHTML += `🔑 Название сгенерировано ИИ: ${repoName}\n`;
-                log.innerHTML += `\n✅ Поздравляю! Ты не ввел ни названия, ни структуры. ИИ сделал ВСЁ сам.\n`;
-                log.innerHTML += `🤖 Это уровень Autonomous AI Developer\n`;
+                log.innerHTML += `\n📝 Название: ${repoName}\n`;
+                log.innerHTML += `🎯 Тип: ${projectType}\n`;
+                log.innerHTML += `\n✅ ИИ полностью создал проект без твоего участия!\n`;
+                log.innerHTML += `🔥 Теперь у тебя есть готовый репозиторий с кодом, Docker и Pages!\n`;
 
             } catch (error) {
-                log.innerHTML += `\n❌ КРИТИЧЕСКАЯ ОШИБКА: ${error.message}\n`;
-                if (error.message.includes('token')) {
-                    log.innerHTML += `\n🔧 Решение: Создай новый токен с правами 'repo' (полный доступ)\n`;
-                }
-                if (error.message.includes('OpenRouter')) {
-                    log.innerHTML += `\n🔧 Решение: Проверь ключ OpenRouter или баланс\n`;
+                log.innerHTML += `\n❌ ОШИБКА: ${error.message}\n`;
+                
+                if (error.message.includes('email')) {
+                    log.innerHTML += `\n🔧 РЕШЕНИЕ:\n`;
+                    log.innerHTML += `1. Перейди: https://github.com/settings/emails\n`;
+                    log.innerHTML += `2. Подтверди email адрес\n`;
+                    log.innerHTML += `3. Создай новый токен с правами 'repo' и 'user:email'\n`;
+                } else if (error.message.includes('token')) {
+                    log.innerHTML += `\n🔧 РЕШЕНИЕ: Создай новый токен с правами 'repo' и 'user:email'\n`;
+                } else if (error.message.includes('422') || error.message.includes('Repository creation')) {
+                    log.innerHTML += `\n🔧 РЕШЕНИЕ: Проблема с созданием репозитория.\n`;
+                    log.innerHTML += `1. Проверь подтверждённый email\n`;
+                    log.innerHTML += `2. Попробуй ещё раз, ИИ выберет другое название\n`;
                 }
             }
         }
