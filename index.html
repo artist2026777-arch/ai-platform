@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>AI Telegram Bot Constructor</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl-util/0.15.1/nacl-util.min.js"></script>
+
 <style>
 body{background:#0f1115;color:#fff;font-family:monospace;padding:20px}
 input,textarea{
@@ -34,14 +36,14 @@ margin-top:15px
 </head>
 <body>
 
-<h2>🔥 AI Telegram Bot Constructor</h2>
+<h2>🔥 AI Telegram Bot Constructor (Fixed)</h2>
 
 <input id="token" placeholder="GitHub PAT (repo + workflow)">
 <input id="repo" placeholder="Repository name">
 <input id="tg" placeholder="Telegram Bot Token">
 <input id="openrouter" placeholder="OpenRouter API Key">
 
-<textarea id="desc" placeholder="Опиши какого бота создать... (кнопки, админ, база, состояния и тд)"></textarea>
+<textarea id="desc" placeholder="Опиши какого бота создать..."></textarea>
 
 <button onclick="install()">GENERATE & DEPLOY</button>
 
@@ -75,6 +77,7 @@ try{
 
 log("→ Проверка GitHub");
 const userRes=await fetch("https://api.github.com/user",{headers});
+if(!userRes.ok) throw new Error("PAT неверный");
 const user=await userRes.json();
 const username=user.login;
 log("✓ Аккаунт: "+username);
@@ -100,7 +103,7 @@ body:JSON.stringify({
 model:"openai/gpt-4o-mini",
 messages:[
 {role:"system",content:
-"Ты генерируешь ПОЛНЫЙ рабочий Telegram бот Node.js (long polling) без библиотек кроме node-fetch. Поддержка: команды, inline кнопки, callback_query, состояния пользователей, JSON хранение данных."},
+"Сгенерируй полный рабочий Telegram бот на Node.js (long polling) без библиотек кроме node-fetch. Поддержка команд, inline кнопок, callback_query, состояний пользователей и JSON хранения."},
 {role:"user",content:desc}
 ],
 temperature:0.3
@@ -108,7 +111,7 @@ temperature:0.3
 });
 
 const aiData=await aiRes.json();
-let botCode=aiData.choices?.[0]?.message?.content;
+const botCode=aiData.choices?.[0]?.message?.content;
 
 if(!botCode || botCode.length<500){
 throw new Error("AI вернул недостаточно кода");
@@ -166,19 +169,23 @@ await upload(".github/workflows/runner.yml",workflow);
 log("→ Добавление секретов");
 
 const keyRes=await fetch(`${repoApi}/actions/secrets/public-key`,{headers});
-const {key,key_id}=await keyRes.json();
+const keyData=await keyRes.json();
 
-function encrypt(val){
-const pk=naclUtil.decodeBase64(key);
-const msg=naclUtil.decodeUTF8(val);
-return naclUtil.encodeBase64(nacl.box.seal(msg,pk));
+const publicKey=keyData.key;
+const key_id=keyData.key_id;
+
+function encryptSecret(secret){
+const messageBytes=nacl.util.decodeUTF8(secret);
+const publicKeyBytes=nacl.util.decodeBase64(publicKey);
+const encryptedBytes=nacl.box.seal(messageBytes,publicKeyBytes);
+return nacl.util.encodeBase64(encryptedBytes);
 }
 
 await fetch(`${repoApi}/actions/secrets/TELEGRAM_TOKEN`,{
 method:"PUT",
 headers,
 body:JSON.stringify({
-encrypted_value:encrypt(tg),
+encrypted_value:encryptSecret(tg),
 key_id
 })
 });
@@ -187,7 +194,7 @@ await fetch(`${repoApi}/actions/secrets/OPENROUTER_KEY`,{
 method:"PUT",
 headers,
 body:JSON.stringify({
-encrypted_value:encrypt(openrouter),
+encrypted_value:encryptSecret(openrouter),
 key_id
 })
 });
