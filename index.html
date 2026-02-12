@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>🔥 PRO MAX GitHub AI Cluster</title>
+<title>GitHub AI Cluster Installer</title>
 <style>
-body{background:#0f172a;color:white;font-family:Arial;padding:40px}
+body{background:#0f172a;color:white;font-family:Arial;padding:30px}
 input{display:block;margin:10px 0;padding:10px;width:420px}
 button{padding:12px 25px;background:#22c55e;border:0;color:white;font-weight:bold;cursor:pointer}
 pre{background:#111;padding:20px;margin-top:20px;white-space:pre-wrap}
@@ -12,19 +12,18 @@ pre{background:#111;padding:20px;margin-top:20px;white-space:pre-wrap}
 </head>
 <body>
 
-<h1>🔥 PRO MAX Cluster Installer</h1>
+<h1>🔥 GitHub AI Cluster Installer</h1>
 
 <input id="token" placeholder="GitHub PAT (repo + workflow)">
 <input id="repo" placeholder="Repository Name">
-<input id="telegram" placeholder="Telegram Bot Token">
-<input id="openrouter" placeholder="OpenRouter API Key">
 
-<button onclick="install()">DEPLOY PRO MAX</button>
+<button onclick="install()">DEPLOY</button>
 
 <pre id="log"></pre>
 
 <script>
-function log(t){document.getElementById("log").innerText+=t+"\\n"}
+
+function log(t){document.getElementById("log").innerText+=t+"\n"}
 
 async function install(){
 
@@ -37,11 +36,15 @@ const headers={
 "Content-Type":"application/json"
 };
 
-await fetch("https://api.github.com/user/repos",{
+log("Creating repository...");
+
+let r=await fetch("https://api.github.com/user/repos",{
 method:"POST",
 headers,
 body:JSON.stringify({name:repo,private:false})
 });
+
+if(!r.ok){ log("Repo creation failed"); return; }
 
 const user=await fetch("https://api.github.com/user",{headers});
 const username=(await user.json()).login;
@@ -53,110 +56,152 @@ await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`,
 method:"PUT",
 headers,
 body:JSON.stringify({
-message:"PRO MAX deploy",
+message:"init",
 content:b64(content)
 })
 });
 }
 
+log("Uploading cluster files...");
+
 await createFile("cluster/state.json",
 JSON.stringify({master:"",last_heartbeat:0},null,2));
 
 await createFile("cluster/offset.json",
-JSON.stringify({telegram_offset:0},null,2));
+JSON.stringify({offset:0},null,2));
 
-await createFile("cluster/lock.json",
-JSON.stringify({locked:false,timestamp:0},null,2));
-
-await createFile("bot.js",`
-const fs=require('fs');
-const {execSync}=require('child_process');
-
-const node=process.env.NODE_NAME;
-let state=JSON.parse(fs.readFileSync("cluster/state.json"));
-let lock=JSON.parse(fs.readFileSync("cluster/lock.json"));
-
-const now=Date.now();
-
-if(!state.master || now-state.last_heartbeat>90000){
-state.master=node;
-state.last_heartbeat=now;
+await createFile("package.json",`
+{
+"type":"module",
+"dependencies":{
+"node-fetch":"^3.3.2"
 }
-
-if(state.master!==node){
-console.log("Not master");
-process.exit(0);
 }
-
-if(lock.locked && now-lock.timestamp<15000){
-console.log("Waiting lock...");
-process.exit(0);
-}
-
-lock.locked=true;
-lock.timestamp=now;
-fs.writeFileSync("cluster/lock.json",JSON.stringify(lock,null,2));
-
-state.last_heartbeat=Date.now();
-fs.writeFileSync("cluster/state.json",JSON.stringify(state,null,2));
-
-execSync("git config user.name 'cluster'");
-execSync("git config user.email 'cluster@bot'");
-execSync("git add .");
-execSync("git commit -m 'heartbeat'");
-execSync("git push");
-
-lock.locked=false;
-fs.writeFileSync("cluster/lock.json",JSON.stringify(lock,null,2));
-
-console.log("Heartbeat updated");
 `);
 
-function nodeWorkflow(name){
+await createFile("bot.js",`
+import fs from "fs";
+import fetch from "node-fetch";
+import { execSync } from "child_process";
+
+const node = process.env.NODE_NAME;
+const telegram = process.env.TELEGRAM_TOKEN;
+const openrouter = process.env.OPENROUTER_KEY;
+
+let state = JSON.parse(fs.readFileSync("cluster/state.json"));
+let offsetData = JSON.parse(fs.readFileSync("cluster/offset.json"));
+
+const now = Date.now();
+const TIMEOUT = 90000;
+
+if (!state.master || now - state.last_heartbeat > TIMEOUT) {
+  state.master = node;
+  state.last_heartbeat = now;
+  console.log("TAKEOVER:", node);
+}
+
+if (state.master !== node) {
+  console.log("Not leader");
+  process.exit(0);
+}
+
+async function getUpdates() {
+  const res = await fetch(
+    \`https://api.telegram.org/bot\${telegram}/getUpdates?offset=\${offsetData.offset}\`
+  );
+  return res.json();
+}
+
+async function sendMessage(chat, text) {
+  await fetch(
+    \`https://api.telegram.org/bot\${telegram}/sendMessage\`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chat, text })
+    }
+  );
+}
+
+async function askAI(text) {
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + openrouter,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-4o-mini",
+      messages: [{ role: "user", content: text }]
+    })
+  });
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || "Error";
+}
+
+async function run() {
+  const updates = await getUpdates();
+  if (!updates.result) return;
+
+  for (const u of updates.result) {
+    offsetData.offset = u.update_id + 1;
+    if (u.message?.text) {
+      const reply = await askAI(u.message.text);
+      await sendMessage(u.message.chat.id, reply);
+    }
+  }
+
+  state.last_heartbeat = Date.now();
+
+  fs.writeFileSync("cluster/state.json", JSON.stringify(state,null,2));
+  fs.writeFileSync("cluster/offset.json", JSON.stringify(offsetData,null,2));
+
+  execSync("git config user.name 'cluster'");
+  execSync("git config user.email 'cluster@bot'");
+  execSync("git add .");
+  execSync("git commit -m 'heartbeat'");
+  execSync("git push");
+}
+
+run();
+`);
+
+function workflow(name){
 return `
 name: ${name}
 
 on:
   schedule:
-    - cron: "*/4 * * * *"
+    - cron: "*/2 * * * *"
   workflow_dispatch:
 
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: npm install
       - run: node bot.js
         env:
           NODE_NAME: "${name}"
+          TELEGRAM_TOKEN: \${{ secrets.TELEGRAM_TOKEN }}
+          OPENROUTER_KEY: \${{ secrets.OPENROUTER_KEY }}
 `;
 }
 
-await createFile(".github/workflows/node1.yml",nodeWorkflow("node1"));
-await createFile(".github/workflows/node2.yml",nodeWorkflow("node2"));
-await createFile(".github/workflows/node3.yml",nodeWorkflow("node3"));
+await createFile(".github/workflows/node1.yml",workflow("node1"));
+await createFile(".github/workflows/node2.yml",workflow("node2"));
+await createFile(".github/workflows/node3.yml",workflow("node3"));
 
-await createFile(".github/workflows/watchdog.yml",`
-name: watchdog
+log("DONE.");
+log("Now go to repo → Settings → Secrets → Actions");
+log("Add TELEGRAM_TOKEN and OPENROUTER_KEY manually.");
+log("Then go to Actions tab and enable workflows.");
 
-on:
-  schedule:
-    - cron: "*/3 * * * *"
-
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          echo "Watchdog active"
-`);
-
-log("PRO MAX deployed.");
 }
 </script>
 
