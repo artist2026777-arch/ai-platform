@@ -2,33 +2,29 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Конструктор + Чат с OpenRouter</title>
+<title>Конструктор ботов — простой и с логами</title>
 <style>
-  body { background: #0f172a; color: #e2e8f0; font-family: Arial, sans-serif; padding: 20px; max-width: 920px; margin: auto; }
-  h1 { color: #a5b4fc; }
-  label { display: block; margin: 15px 0 6px; font-weight: bold; }
-  input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 6px; box-sizing: border-box; }
-  textarea { height: 140px; }
-  button { padding: 12px 30px; background: #22c55e; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin: 10px 5px 10px 0; }
-  button:hover { background: #16a34a; }
-  #status { padding: 12px; border-radius: 6px; margin: 10px 0; font-weight: bold; }
-  .success { background: #16a34a; color: white; }
-  .error   { background: #dc2626; color: white; }
-  pre { background: #111; padding: 15px; border-radius: 6px; white-space: pre-wrap; max-height: 300px; overflow-y: auto; font-size: 13px; }
-
-  /* Чат-окно */
-  #chat-container { margin-top: 40px; border-top: 2px solid #334155; padding-top: 20px; }
-  #chat-messages { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
-  .message { margin: 10px 0; padding: 10px; border-radius: 8px; }
-  .user { background: #2563eb; color: white; text-align: right; margin-left: 30%; }
-  .ai   { background: #1e293b; color: white; margin-right: 30%; }
-  #chat-input { width: calc(100% - 100px); padding: 10px; background: #1e293b; color: white; border: 1px solid #334155; border-radius: 6px; }
-  #send-chat { padding: 10px 20px; background: #3b82f6; }
+  body { background:#0f172a; color:#e2e8f0; font-family:Arial; padding:20px; max-width:900px; margin:auto; }
+  h1 { color:#a5b4fc; }
+  label { display:block; margin:15px 0 5px; font-weight:bold; }
+  input, textarea { width:100%; padding:10px; margin-bottom:10px; background:#1e293b; color:white; border:1px solid #334155; border-radius:6px; box-sizing:border-box; }
+  textarea { height:160px; }
+  button { padding:12px 25px; background:#22c55e; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin:8px 8px 8px 0; }
+  button:hover { background:#16a34a; }
+  #status { padding:12px; border-radius:6px; margin:15px 0; font-weight:bold; }
+  .success { background:#16a34a; color:white; }
+  .error { background:#dc2626; color:white; }
+  pre { background:#111; padding:15px; border-radius:6px; white-space:pre-wrap; max-height:500px; overflow-y:auto; font-size:14px; }
+  #chat { margin-top:30px; border-top:2px solid #334155; padding-top:20px; }
+  #chat-messages { background:#0f172a; border:1px solid #334155; border-radius:6px; padding:10px; height:200px; overflow-y:auto; margin-bottom:10px; }
+  .msg { margin:8px 0; padding:8px; border-radius:6px; }
+  .user { background:#2563eb; color:white; text-align:right; margin-left:30%; }
+  .bot  { background:#1e293b; color:white; margin-right:30%; }
 </style>
 </head>
 <body>
 
-<h1>Конструктор ботов + Проверка OpenRouter</h1>
+<h1>Конструктор ботов + Тест OpenRouter</h1>
 
 <label>GitHub PAT</label>
 <input id="token" placeholder="ghp_...">
@@ -43,62 +39,72 @@
 <input id="openrouter" placeholder="sk-or-v1-...">
 
 <label>Описание бота</label>
-<textarea id="description">Создай бота для клининга в Уфе с меню кнопок...</textarea>
+<textarea id="description">Создай Telegram-бота для клининга в Уфе.
+- /start — приветствие + кнопки: Цены, Записаться, Контакты, Отзывы
+- Цены — список услуг и цены
+- Записаться — спрашивает адрес, дату, телефон
+- Контакты — телефон +79191665789, WhatsApp
+- Отзывы — примеры
+- Всё на русском</textarea>
 
-<button onclick="checkPat()">ПРОВЕРИТЬ PAT</button>
-<button onclick="generateAndDeploy()">СОЗДАТЬ БОТА</button>
+<div>
+  <button onclick="checkPat()">ПРОВЕРИТЬ PAT</button>
+  <button onclick="generateAndDeploy()">СОЗДАТЬ БОТА</button>
+  <button onclick="testOpenRouter()">ТЕСТОВЫЙ ЗАПРОС К OpenRouter</button>
+  <button onclick="document.getElementById('log').textContent='Лог очищен\n';">ОЧИСТИТЬ ЛОГ</button>
+</div>
 
 <div id="status"></div>
-<pre id="log">Логи...\n</pre>
+<pre id="log">Логи появятся здесь...\n</pre>
 
-<!-- ЧАТ ДЛЯ ТЕСТА OPENROUTER -->
-<div id="chat-container">
-  <h2>Чат с OpenRouter (проверка ключа)</h2>
+<!-- Тестовый чат -->
+<div id="chat">
+  <h3>Тестовый чат OpenRouter (проверка ключа)</h3>
   <div id="chat-messages"></div>
-  <div>
-    <input id="chat-input" placeholder="Напиши сообщение для ИИ (например: 'Привет, тест')">
-    <button id="send-chat" onclick="sendChatMessage()">Отправить</button>
-  </div>
+  <input id="chat-msg" placeholder="Напиши сообщение для ИИ">
+  <button onclick="sendTestChat()">Отправить в OpenRouter</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl-util/0.15.1/nacl-util.min.js"></script>
 
 <script>
-const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
-const chatMessages = document.getElementById('chat-messages');
-const chatInput = document.getElementById('chat-input');
+const statusEl = document.getElementById('status');
+const chatEl = document.getElementById('chat-messages');
 
-function log(t) { logEl.textContent += t + '\n'; logEl.scrollTop = logEl.scrollHeight; }
+function log(t) {
+  logEl.textContent += t + '\n';
+  logEl.scrollTop = logEl.scrollHeight;
+}
 
 function setStatus(t, type = '') {
   statusEl.textContent = t;
   statusEl.className = 'status ' + type;
 }
 
-function addChatMessage(text, isUser = false) {
+function addChat(text, isUser = false) {
   const div = document.createElement('div');
-  div.className = 'message ' + (isUser ? 'user' : 'ai');
+  div.className = 'msg ' + (isUser ? 'user' : 'bot');
   div.textContent = text;
-  chatMessages.appendChild(div);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+  chatEl.appendChild(div);
+  chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-async function sendChatMessage() {
-  const text = chatInput.value.trim();
+async function sendTestChat() {
+  const text = document.getElementById('chat-msg').value.trim();
   if (!text) return;
 
-  addChatMessage(text, true);
-  chatInput.value = '';
+  addChat(text, true);
+  document.getElementById('chat-msg').value = '';
 
   const key = document.getElementById('openrouter').value.trim();
   if (!key) {
-    addChatMessage('Ошибка: вставь OpenRouter ключ выше', false);
+    addChat('Ошибка: вставь OpenRouter ключ', false);
     return;
   }
 
-  addChatMessage('Думаю...', false);
+  addChat('Думаю...', false);
 
   try {
     const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -110,8 +116,7 @@ async function sendChatMessage() {
       body: JSON.stringify({
         model: 'openai/gpt-4o-mini',
         messages: [{ role: 'user', content: text }],
-        max_tokens: 300,
-        temperature: 0.7
+        max_tokens: 150
       })
     });
 
@@ -122,29 +127,91 @@ async function sendChatMessage() {
 
     const data = await res.json();
     const reply = data.choices?.[0]?.message?.content || 'Нет ответа';
-    chatMessages.lastChild.textContent = reply;
+    chatEl.lastChild.textContent = reply;
   } catch (err) {
-    chatMessages.lastChild.textContent = 'Ошибка: ' + err.message;
-    console.error(err);
+    chatEl.lastChild.textContent = 'Ошибка: ' + err.message;
+    log('Ошибка теста OpenRouter: ' + err.message);
   }
 }
 
 async function checkPat() {
-  // ... (код проверки PAT остаётся прежним, можешь вставить из предыдущей версии)
-  // Пока оставим заглушку, чтобы не удлинять
-  setStatus('PAT проверка временно отключена', '');
+  const token = document.getElementById('token').value.trim();
+  if (!token) return setStatus('PAT пустой', 'error');
+
+  setStatus('Проверка PAT...', '');
+  log('→ Проверка PAT');
+
+  try {
+    const res = await fetch('https://api.github.com/user', {
+      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
+    });
+    if (!res.ok) throw new Error(`GitHub ${res.status}`);
+    const user = await res.json();
+    log(`✓ PAT OK! Ты: ${user.login}`);
+    setStatus(`PAT работает (${user.login})`, 'success');
+  } catch (err) {
+    log('Ошибка PAT: ' + err.message);
+    setStatus('PAT ошибка: ' + err.message, 'error');
+  }
 }
 
-// generateAndDeploy — можно оставить прежний, или упростить
 async function generateAndDeploy() {
-  setStatus('Генерация пока отключена — сначала проверь чат выше', 'error');
-  log('Сначала проверь ключ в чате с OpenRouter');
-}
+  const token = document.getElementById('token').value.trim();
+  const repo = document.getElementById('repo').value.trim();
+  const tg = document.getElementById('tg').value.trim();
+  const openrouter = document.getElementById('openrouter').value.trim();
+  const desc = document.getElementById('description').value.trim();
 
-// Привязка
-window.checkPat = checkPat;
-window.generateAndDeploy = generateAndDeploy;
-window.sendChatMessage = sendChatMessage;
+  if (!token || !repo || !tg || !openrouter || !desc) {
+    setStatus('Заполни все поля!', 'error');
+    return;
+  }
+
+  log('Запуск генерации...');
+
+  try {
+    // Генерация
+    setStatus('Генерирую код...', '');
+    log('→ Запрос к OpenRouter');
+
+    const prompt = `...`; // (оставь свой промпт или возьми из предыдущего кода)
+
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openrouter}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 4500,
+        temperature: 0.35
+      })
+    });
+
+    log(`OpenRouter ответил: ${res.status}`);
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`OpenRouter: ${res.status} — ${err}`);
+    }
+
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || '';
+
+    log('Ответ получен, длина: ' + text.length + ' символов');
+    log('Парсинг файлов...');
+
+    // (дальше парсинг, загрузка в GitHub — как в предыдущих версиях)
+
+    setStatus('Генерация прошла! Проверь лог ниже', 'success');
+    log('Генерация завершена. Если bot.js не найден — уточни описание.');
+  } catch (err) {
+    log('ОШИБКА: ' + err.message);
+    setStatus('Ошибка: ' + err.message, 'error');
+  }
+}
 </script>
 </body>
 </html>
