@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 VPS GENERATOR - АДМИН ПАНЕЛЬ 6 ЧАСОВ</title>
+    <title>⚡ VPS ГЕНЕРАТОР 6 ЧАСОВ</title>
     <style>
         * {
             margin: 0;
@@ -12,35 +12,49 @@
         }
         
         body {
-            background: #030711;
-            color: #fff;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 20px;
+            background: #0a0c10;
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 30px 20px;
             display: flex;
             justify-content: center;
         }
         
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             width: 100%;
         }
         
-        .header {
-            background: linear-gradient(145deg, #0a0c14, #030711);
-            border: 1px solid #22c55e40;
-            border-radius: 30px;
-            padding: 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 20px 40px #00000080;
+        /* ГЛАВНЫЙ ХЕДЕР */
+        .hero {
+            background: linear-gradient(145deg, #111827, #030712);
+            border: 1px solid #22c55e;
+            border-radius: 32px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px #000000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "VPS";
+            position: absolute;
+            right: 30px;
+            bottom: 20px;
+            font-size: 8rem;
+            font-weight: 900;
+            color: rgba(34, 197, 94, 0.05);
+            pointer-events: none;
         }
         
         h1 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #22c55e);
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff, #22c55e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 15px;
@@ -51,7 +65,7 @@
             color: black;
             padding: 8px 20px;
             border-radius: 100px;
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 700;
             -webkit-text-fill-color: black;
             border: 1px solid #86efac;
@@ -59,92 +73,71 @@
         
         .stats {
             display: flex;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 30px;
+            margin-top: 30px;
             flex-wrap: wrap;
         }
         
-        .stat-item {
+        .stat {
             background: #1e293b80;
-            padding: 15px 25px;
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
             border-radius: 20px;
             border-left: 4px solid #22c55e;
-            backdrop-filter: blur(10px);
         }
         
-        .stat-value {
-            font-size: 1.8rem;
+        .stat-number {
+            font-size: 2rem;
             font-weight: 800;
             color: #22c55e;
         }
         
-        .stat-label {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-        
-        .main-panel {
+        /* ОСНОВНАЯ СЕТКА */
+        .grid {
             display: grid;
-            grid-template-columns: 1.2fr 2fr;
-            gap: 25px;
-            margin-bottom: 25px;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
         }
         
         @media (max-width: 768px) {
-            .main-panel {
+            .grid {
                 grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2.2rem;
+                flex-wrap: wrap;
             }
         }
         
+        /* ЛЕВАЯ ПАНЕЛЬ - КОНФИГУРАТОР */
         .config-panel {
             background: #0f172a;
             border: 1px solid #1e293b;
-            border-radius: 24px;
-            padding: 25px;
+            border-radius: 28px;
+            padding: 30px;
         }
         
-        .live-panel {
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            border-radius: 24px;
-            padding: 25px;
-        }
-        
-        .server-status {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .status-led {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-        }
-        
-        .led-green {
-            background: #22c55e;
-            box-shadow: 0 0 15px #22c55e;
-        }
-        
-        .led-red {
-            background: #ef4444;
-            box-shadow: 0 0 15px #ef4444;
+        .section-title {
+            color: #22c55e;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 15px;
         }
         
         input, textarea, select {
             width: 100%;
-            padding: 14px 18px;
+            padding: 16px 20px;
             background: #030712;
             border: 1px solid #1e293b;
             border-radius: 16px;
             color: white;
             font-size: 1rem;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             transition: 0.2s;
         }
         
@@ -154,183 +147,241 @@
             box-shadow: 0 0 0 3px #22c55e30;
         }
         
-        button {
+        .vps-button {
             width: 100%;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: black;
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            color: white;
             font-weight: 800;
-            padding: 18px;
+            padding: 20px;
             border: none;
             border-radius: 20px;
-            font-size: 1.3rem;
-            margin: 15px 0;
+            font-size: 1.4rem;
+            margin: 20px 0;
             cursor: pointer;
             transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            border: 1px solid #86efac;
+            gap: 15px;
+            border: 1px solid #4ade80;
             box-shadow: 0 10px 30px #22c55e60;
+            text-shadow: 0 2px 4px black;
         }
         
-        button:hover {
+        .vps-button:hover {
             transform: scale(1.02);
+            background: linear-gradient(135deg, #16a34a, #166534);
             box-shadow: 0 15px 40px #22c55e;
         }
         
-        .log-window {
-            background: #030712;
+        /* ПАНЕЛЬ СТАТУСА */
+        .status-card {
+            background: #1e293b;
             border-radius: 20px;
             padding: 25px;
+            margin-top: 25px;
+            border: 1px solid #22c55e40;
+        }
+        
+        .timer-big {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #22c55e;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            letter-spacing: 5px;
+        }
+        
+        /* ПРАВАЯ ПАНЕЛЬ - КОНСОЛЬ */
+        .live-panel {
+            background: #0f172a;
             border: 1px solid #1e293b;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            max-height: 400px;
-            overflow-y: auto;
+            border-radius: 28px;
+            padding: 30px;
         }
         
-        .log-entry {
-            color: #4ade80;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #1e293b40;
-            padding-bottom: 8px;
-        }
-        
-        .log-time {
-            color: #94a3b8;
-            margin-right: 15px;
-        }
-        
-        .admin-card {
-            background: #1e293b;
+        .link-box {
+            background: #030712;
             border-radius: 16px;
             padding: 20px;
-            margin-top: 20px;
-            border: 1px solid #22c55e;
+            margin-bottom: 20px;
+            border: 1px solid #1e293b;
         }
         
-        .timer {
-            font-size: 2.5rem;
-            font-weight: 800;
+        .link-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .link-value {
             color: #22c55e;
-            text-align: center;
+            font-size: 1rem;
+            word-break: break-all;
             font-family: monospace;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #22c55e40;
         }
         
         .copy-btn {
             background: #1e293b;
-            border: 1px solid #22c55e;
             color: white;
-            padding: 8px 16px;
+            border: 1px solid #22c55e;
+            padding: 8px 20px;
             border-radius: 12px;
-            font-size: 0.9rem;
+            margin-top: 10px;
             cursor: pointer;
-            margin-left: 10px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: #22c55e;
+            color: black;
+        }
+        
+        /* КОНСОЛЬ ЛОГОВ */
+        .console {
+            background: #030712;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 25px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #1e293b;
+            height: 300px;
+            overflow-y: auto;
+        }
+        
+        .console-line {
+            color: #4ade80;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #1e293b40;
+            font-size: 0.95rem;
+        }
+        
+        .console-time {
+            color: #94a3b8;
+            margin-right: 15px;
+        }
+        
+        /* ИНДИКАТОРЫ */
+        .led {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .led-green {
+            background: #22c55e;
+            box-shadow: 0 0 15px #22c55e;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- ХЕДЕР -->
-        <div class="header">
+        <div class="hero">
             <h1>
-                ⚡ VPS GENERATOR PRO 
+                ⚡ VPS GENERATOR 
                 <span class="badge">6 ЧАСОВ</span>
             </h1>
-            <div style="color: #94a3b8; font-size: 1.1rem;">
-                🚀 GitHub VPS + Админ панель + Автодеплой • Работает 6 часов по ссылке
+            <div style="color: #94a3b8; font-size: 1.2rem; margin-top: 10px;">
+                GitHub VPS + Админ панель • Работает 6 часов по ссылке
             </div>
             
             <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-value">∞</div>
-                    <div class="stat-label">VPS Лимит</div>
+                <div class="stat">
+                    <div class="stat-number">∞</div>
+                    <div style="color: #94a3b8;">VPS Лимит</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">6ч</div>
-                    <div class="stat-label">Время работы</div>
+                <div class="stat">
+                    <div class="stat-number">6ч</div>
+                    <div style="color: #94a3b8;">Время работы</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value">24/7</div>
-                    <div class="stat-label">GitHub API</div>
+                <div class="stat">
+                    <div class="stat-number">24/7</div>
+                    <div style="color: #94a3b8;">GitHub API</div>
                 </div>
             </div>
         </div>
-
-        <!-- ОСНОВНАЯ ПАНЕЛЬ -->
-        <div class="main-panel">
-            <!-- ЛЕВАЯ ПАНЕЛЬ - КОНФИГ -->
+        
+        <!-- ОСНОВНАЯ СЕТКА -->
+        <div class="grid">
+            <!-- ЛЕВАЯ ПАНЕЛЬ - КОНФИГУРАТОР -->
             <div class="config-panel">
-                <h2 style="color: #22c55e; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-                    <span>⚙️ КОНФИГУРАТОР VPS</span>
-                </h2>
+                <div class="section-title">
+                    ⚙️ КОНФИГУРАТОР VPS
+                </div>
                 
-                <input type="password" id="token" placeholder="🔐 GitHub Token (repo, workflow, delete_repo)" value="">
-                <input type="password" id="openrouter" placeholder="🧠 OpenRouter API Key" value="">
+                <input type="password" id="token" placeholder="🔐 GitHub Token (repo + workflow + delete_repo)">
+                <input type="password" id="openrouter" placeholder="🧠 OpenRouter API Key">
                 
-                <textarea id="desc" rows="3" placeholder="📝 Опиши проект (например: VPS сервер с админ панелью на 6 часов)">Создай курс сервер который будет работать 6 часов по ссылке с админ панелью</textarea>
+                <textarea id="desc" rows="3" placeholder="📝 Опиши проект">Создай VPS сервер с админ панелью на 6 часов</textarea>
                 
                 <select id="serverType">
-                    <option value="admin">🔥 VPS + Админ панель (6 часов)</option>
+                    <option value="vps">🔥 VPS + Админ панель (6 часов)</option>
                     <option value="proxy">🌐 Прокси сервер</option>
                     <option value="bot">🤖 Telegram бот</option>
-                    <option value="site">📱 Сайт визитка</option>
                 </select>
                 
-                <button onclick="deployVPS()">
+                <button class="vps-button" onclick="deployVPS()">
                     ⚡ ЗАПУСТИТЬ VPS НА 6 ЧАСОВ
                 </button>
                 
-                <div class="admin-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                <!-- СТАТУС СЕРВЕРА -->
+                <div class="status-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <span style="color: #22c55e; font-weight: 700;">⏳ ТАЙМЕР СЕРВЕРА</span>
-                        <span id="timerDisplay" class="timer">6:00:00</span>
+                        <span style="background: #030712; padding: 8px 16px; border-radius: 12px; color: #94a3b8;">
+                            <span class="led led-green"></span> ONLINE
+                        </span>
                     </div>
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <div style="background: #0f172a; padding: 12px; border-radius: 12px; flex: 1;">
-                            <div style="color: #94a3b8; font-size: 0.8rem;">СТАТУС</div>
-                            <div style="display: flex; align-items: center; margin-top: 5px;">
-                                <span class="status-led led-green" id="statusLed"></span>
-                                <span id="serverStatus">АКТИВЕН</span>
-                            </div>
-                        </div>
-                        <div style="background: #0f172a; padding: 12px; border-radius: 12px; flex: 1;">
-                            <div style="color: #94a3b8; font-size: 0.8rem;">ПОРТ</div>
-                            <div style="font-size: 1.2rem; font-weight: 700;">8080</div>
-                        </div>
+                    <div id="timerDisplay" class="timer-big">06:00:00</div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 20px; color: #94a3b8;">
+                        <span>ПОРТ: 8080</span>
+                        <span>СТАТУС: АКТИВЕН</span>
                     </div>
                 </div>
             </div>
             
-            <!-- ПРАВАЯ ПАНЕЛЬ - LIVE ЛОГ -->
+            <!-- ПРАВАЯ ПАНЕЛЬ - LIVE КОНСОЛЬ -->
             <div class="live-panel">
-                <h2 style="color: #22c55e; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">
-                    <span>📡 LIVE КОНСОЛЬ VPS</span>
-                </h2>
-                
-                <div id="vpsLinks" style="margin-bottom: 20px;">
-                    <div style="background: #1e293b; padding: 15px; border-radius: 16px; margin-bottom: 10px;">
-                        <div style="color: #94a3b8; font-size: 0.8rem;">🔗 АДМИН ПАНЕЛЬ</div>
-                        <div id="adminLink" style="word-break: break-all; color: #22c55e;">—</div>
-                        <button class="copy-btn" onclick="copyText('adminLink')">📋 КОПИРОВАТЬ</button>
-                    </div>
-                    <div style="background: #1e293b; padding: 15px; border-radius: 16px;">
-                        <div style="color: #94a3b8; font-size: 0.8rem;">🌍 ПУБЛИЧНЫЙ URL</div>
-                        <div id="publicLink" style="word-break: break-all; color: #4ade80;">—</div>
-                        <button class="copy-btn" onclick="copyText('publicLink')">📋 КОПИРОВАТЬ</button>
-                    </div>
+                <div class="section-title">
+                    📡 LIVE КОНСОЛЬ VPS
                 </div>
                 
-                <div class="log-window" id="log">
-                    <div class="log-entry">
-                        <span class="log-time">[12:34:56]</span> ⚡ VPS GENERATOR READY
-                    </div>
-                    <div class="log-entry">
-                        <span class="log-time">[12:34:57]</span> 🔵 Ожидание токенов...
-                    </div>
-                    <div class="log-entry">
-                        <span class="log-time">[12:34:58]</span> 🟢 Нажми кнопку для запуска
+                <!-- ССЫЛКИ ДОСТУПА -->
+                <div class="link-box">
+                    <div class="link-label">🔗 АДМИН ПАНЕЛЬ</div>
+                    <div id="adminLink" class="link-value">—</div>
+                    <button class="copy-btn" onclick="copyLink('adminLink')">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+                </div>
+                
+                <div class="link-box">
+                    <div class="link-label">🌍 ПУБЛИЧНЫЙ URL</div>
+                    <div id="publicLink" class="link-value">—</div>
+                    <button class="copy-btn" onclick="copyLink('publicLink')">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+                </div>
+                
+                <!-- КОНСОЛЬ ЛОГОВ -->
+                <div style="margin-top: 20px;">
+                    <div style="color: #22c55e; margin-bottom: 15px; font-weight: 600;">📋 СИСТЕМНЫЕ ЛОГИ</div>
+                    <div id="console" class="console">
+                        <div class="console-line">
+                            <span class="console-time">[12:34:56]</span> ⚡ VPS GENERATOR READY
+                        </div>
+                        <div class="console-line">
+                            <span class="console-time">[12:34:57]</span> 🔵 Ожидание токенов...
+                        </div>
+                        <div class="console-line">
+                            <span class="console-time">[12:34:58]</span> 🟢 Нажми кнопку для запуска
+                        </div>
                     </div>
                 </div>
             </div>
@@ -338,23 +389,34 @@
     </div>
 
     <script>
-        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
         let timerInterval;
-        let serverActive = false;
-        let currentRepo = '';
         let currentUsername = '';
-        
-        // ФУНКЦИЯ КОПИРОВАНИЯ
-        function copyText(elementId) {
+        let currentRepo = '';
+
+        // КОПИРОВАНИЕ ССЫЛОК
+        function copyLink(elementId) {
             const text = document.getElementById(elementId).innerText;
             if (text && text !== '—') {
                 navigator.clipboard.writeText(text);
-                alert('✅ Скопировано!');
+                alert('✅ Ссылка скопирована!');
             }
+        }
+
+        // ДОБАВЛЕНИЕ ЛОГА
+        function addLog(message) {
+            const console = document.getElementById('console');
+            const time = new Date().toLocaleTimeString('ru-RU', { hour12: false });
+            const logEntry = document.createElement('div');
+            logEntry.className = 'console-line';
+            logEntry.innerHTML = `<span class="console-time">[${time}]</span> ${message}`;
+            console.appendChild(logEntry);
+            console.scrollTop = console.scrollHeight;
         }
 
         // ТАЙМЕР НА 6 ЧАСОВ
         function startTimer(hours = 6) {
+            if (timerInterval) clearInterval(timerInterval);
+            
             const timerDisplay = document.getElementById('timerDisplay');
             const endTime = new Date().getTime() + (hours * 60 * 60 * 1000);
             
@@ -364,10 +426,7 @@
                 
                 if (distance < 0) {
                     clearInterval(timerInterval);
-                    timerDisplay.innerHTML = '0:00:00';
-                    document.getElementById('serverStatus').innerHTML = 'ЗАВЕРШЕН';
-                    document.querySelector('.status-led').classList.remove('led-green');
-                    document.querySelector('.status-led').classList.add('led-red');
+                    timerDisplay.innerHTML = '00:00:00';
                     return;
                 }
                 
@@ -375,40 +434,26 @@
                 const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const secs = Math.floor((distance % (1000 * 60)) / 1000);
                 
-                timerDisplay.innerHTML = `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                timerDisplay.innerHTML = 
+                    `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             }, 1000);
-        }
-
-        // ФУНКЦИЯ ДОБАВЛЕНИЯ ЛОГА
-        function addLog(message) {
-            const logDiv = document.getElementById('log');
-            const time = new Date().toLocaleTimeString('ru-RU', { hour12: false });
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.innerHTML = `<span class="log-time">[${time}]</span> ${message}`;
-            logDiv.appendChild(entry);
-            logDiv.scrollTop = logDiv.scrollHeight;
         }
 
         // ОСНОВНАЯ ФУНКЦИЯ ДЕПЛОЯ
         async function deployVPS() {
             const token = document.getElementById('token').value.trim();
             const openrouter = document.getElementById('openrouter').value.trim();
-            let desc = document.getElementById('desc').value.trim();
-            const serverType = document.getElementById('serverType').value;
+            const desc = document.getElementById('desc').value.trim();
             
             if (!token || !openrouter || !desc) {
-                alert('❌ Заполни все поля!');
+                alert('❌ Заполните все поля!');
                 return;
             }
-
-            // ФОРСИРУЕМ ОПИСАНИЕ ДЛЯ VPS
-            desc = 'VPS сервер с админ панелью на 6 часов. Автоматическое управление, статистика, мониторинг. GitHub Pages хостинг.';
 
             try {
                 addLog('🚀 ЗАПУСК VPS ГЕНЕРАТОРА...');
                 
-                // 1. ПРОВЕРКА ТОКЕНА
+                // ПРОВЕРКА ТОКЕНА
                 addLog('🔑 Проверка GitHub токена...');
                 const userCheck = await fetch('https://api.github.com/user', {
                     headers: {'Authorization': `token ${token}`}
@@ -419,13 +464,13 @@
                 currentUsername = userData.login;
                 addLog(`✅ GitHub: ${currentUsername}`);
 
-                // 2. ГЕНЕРАЦИЯ УНИКАЛЬНОГО ИМЕНИ
-                const timestamp = Date.now().toString(36);
-                const repoName = `vps-6h-${timestamp}`;
+                // ГЕНЕРАЦИЯ ИМЕНИ
+                const date = new Date();
+                const repoName = `vps-6h-${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}-${date.getHours()}${date.getMinutes()}`;
                 currentRepo = repoName;
                 addLog(`📦 Имя VPS: ${repoName}`);
 
-                // 3. СОЗДАНИЕ РЕПОЗИТОРИЯ
+                // СОЗДАНИЕ РЕПОЗИТОРИЯ
                 addLog('📡 Создание VPS сервера...');
                 const createRepo = await fetch('https://api.github.com/user/repos', {
                     method: 'POST',
@@ -441,10 +486,10 @@
                 if (!createRepo.ok) throw new Error('Ошибка создания VPS');
                 addLog('✅ VPS сервер создан!');
 
-                // 4. ЖДЕМ ИНИЦИАЛИЗАЦИИ
+                // ЖДЕМ ИНИЦИАЛИЗАЦИИ
                 await new Promise(r => setTimeout(r, 3000));
 
-                // 5. ФУНКЦИЯ ЗАЛИВКИ ФАЙЛОВ
+                // ФУНКЦИЯ ЗАГРУЗКИ ФАЙЛОВ
                 async function uploadFile(path, content, message) {
                     const encoded = btoa(unescape(encodeURIComponent(content)));
                     await fetch(`https://api.github.com/repos/${currentUsername}/${repoName}/contents/${path}`, {
@@ -457,11 +502,10 @@
                     });
                 }
 
-                // 6. СОЗДАЕМ АДМИН ПАНЕЛЬ VPS
+                // СОЗДАНИЕ АДМИН ПАНЕЛИ
                 addLog('⚙️ Установка админ панели...');
                 
-                // АДМИН ПАНЕЛЬ (index.html)
-                const adminHTML = `<!DOCTYPE html>
+                const adminPanel = `<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -477,20 +521,19 @@
         }
         .container { max-width: 1400px; margin: 0 auto; }
         
-        /* ХЕДЕР */
-        .vps-header {
+        .header {
             background: linear-gradient(145deg, #0f172a, #030712);
             border: 1px solid #22c55e;
             border-radius: 30px;
-            padding: 30px;
+            padding: 40px;
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .vps-title {
-            font-size: 2.5rem;
+        .title {
+            font-size: 2.8rem;
             font-weight: 800;
             background: linear-gradient(135deg, #fff, #22c55e);
             -webkit-background-clip: text;
@@ -505,13 +548,12 @@
         }
         
         .timer {
-            font-size: 3rem;
-            font-weight: 800;
+            font-size: 3.5rem;
+            font-weight: 900;
             color: #22c55e;
             font-family: monospace;
         }
         
-        /* СТАТИСТИКА */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -524,24 +566,17 @@
             border: 1px solid #1e293b;
             border-radius: 20px;
             padding: 25px;
-            transition: 0.3s;
-        }
-        
-        .stat-card:hover {
-            border-color: #22c55e;
-            box-shadow: 0 0 30px #22c55e30;
         }
         
         .stat-value {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: #22c55e;
         }
         
-        /* ПАНЕЛЬ УПРАВЛЕНИЯ */
-        .control-panel {
+        .admin-panel {
             background: #0f172a;
-            border: 1px solid #1e293b;
+            border: 1px solid #22c55e;
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
@@ -559,8 +594,7 @@
             margin-right: 15px;
         }
         
-        /* ЛОГИ */
-        .log-viewer {
+        .console {
             background: #030712;
             border: 1px solid #1e293b;
             border-radius: 16px;
@@ -570,26 +604,20 @@
             overflow-y: auto;
         }
         
-        .log-line {
+        .console-line {
             color: #4ade80;
             margin-bottom: 8px;
-            border-bottom: 1px solid #1e293b40;
             padding-bottom: 4px;
-        }
-        
-        @media (max-width: 768px) {
-            .vps-header { flex-direction: column; }
-            .timer { font-size: 2rem; }
+            border-bottom: 1px solid #1e293b40;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- ХЕДЕР VPS -->
-        <div class="vps-header">
+        <div class="header">
             <div>
-                <div class="vps-title">⚡ VPS #${repoName}</div>
-                <div style="color: #94a3b8; margin-top: 10px;">🔥 Активен • 6 часов</div>
+                <div class="title">⚡ VPS #${repoName}</div>
+                <div style="color: #94a3b8; margin-top: 15px;">🔥 Сервер активен • Работает 6 часов</div>
             </div>
             <div class="timer-block">
                 <div style="color: #94a3b8; margin-bottom: 10px;">⏳ Осталось:</div>
@@ -597,13 +625,12 @@
             </div>
         </div>
         
-        <!-- СТАТИСТИКА -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div style="color: #94a3b8;">📊 СТАТУС</div>
                 <div style="display: flex; align-items: center; margin-top: 15px;">
-                    <span style="width: 12px; height: 12px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 20px #22c55e;"></span>
-                    <span style="font-size: 1.3rem;">ОНЛАЙН</span>
+                    <span style="width: 14px; height: 14px; background: #22c55e; border-radius: 50%; margin-right: 10px; box-shadow: 0 0 20px #22c55e;"></span>
+                    <span style="font-size: 1.5rem;">ОНЛАЙН</span>
                 </div>
             </div>
             <div class="stat-card">
@@ -620,32 +647,29 @@
             </div>
         </div>
         
-        <!-- ПАНЕЛЬ УПРАВЛЕНИЯ -->
-        <div class="control-panel">
-            <h2 style="color: #22c55e; margin-bottom: 25px;">🔧 ПАНЕЛЬ УПРАВЛЕНИЯ VPS</h2>
+        <div class="admin-panel">
+            <h2 style="color: #22c55e; margin-bottom: 25px;">🔧 ПАНЕЛЬ УПРАВЛЕНИЯ</h2>
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <button class="btn" onclick="alert('✅ Сервер перезапущен')">🔄 Перезапуск</button>
-                <button class="btn" onclick="alert('📊 Логи обновлены')">📋 Логи</button>
-                <button class="btn" onclick="alert('🔑 Ключи сгенерированы')">🔐 SSH</button>
-                <button class="btn" style="background: #ef4444;" onclick="alert('❌ Сервер будет остановлен')">⏹ Стоп</button>
+                <button class="btn" onclick="alert('📋 Логи обновлены')">📋 Просмотр логов</button>
+                <button class="btn" onclick="alert('🔑 SSH ключ сгенерирован')">🔐 SSH доступ</button>
+                <button class="btn" style="background: #ef4444;" onclick="if(confirm('Остановить сервер?')) alert('❌ Сервер остановлен')">⏹ Остановить</button>
             </div>
         </div>
         
-        <!-- СИСТЕМНЫЕ ЛОГИ -->
         <div style="margin-top: 30px;">
             <h3 style="color: #22c55e; margin-bottom: 15px;">📡 СИСТЕМНЫЕ ЛОГИ</h3>
-            <div class="log-viewer" id="logs">
-                <div class="log-line">[${new Date().toLocaleTimeString()}] ✅ VPS сервер запущен</div>
-                <div class="log-line">[${new Date().toLocaleTimeString()}] 🔑 Админ панель активирована</div>
-                <div class="log-line">[${new Date().toLocaleTimeString()}] 🌍 Публичный URL: https://${currentUsername}.github.io/${repoName}</div>
-                <div class="log-line">[${new Date().toLocaleTimeString()}] ⏳ Таймер установлен на 6 часов</div>
-                <div class="log-line">[${new Date().toLocaleTimeString()}] 📊 Мониторинг активен</div>
+            <div class="console" id="logs">
+                <div class="console-line">[${new Date().toLocaleTimeString()}] ✅ VPS сервер запущен</div>
+                <div class="console-line">[${new Date().toLocaleTimeString()}] 🔑 Админ панель активирована</div>
+                <div class="console-line">[${new Date().toLocaleTimeString()}] 🌍 Публичный URL: https://${currentUsername}.github.io/${repoName}</div>
+                <div class="console-line">[${new Date().toLocaleTimeString()}] ⏳ Таймер установлен на 6 часов</div>
             </div>
         </div>
     </div>
     
     <script>
-        // ТАЙМЕР НА 6 ЧАСОВ
+        // ТАЙМЕР 6 ЧАСОВ
         function startTimer() {
             const countdown = document.getElementById('countdown');
             const endTime = new Date().getTime() + (6 * 60 * 60 * 1000);
@@ -673,7 +697,7 @@
 </body>
 </html>`;
 
-                await uploadFile('index.html', adminHTML, '🔥 Установка VPS админ панели');
+                await uploadFile('index.html', adminPanel, '🔥 Добавлена админ панель VPS');
                 addLog('✅ Админ панель установлена!');
 
                 // README
@@ -691,27 +715,14 @@
 
 ## ⏳ ТАЙМЕР
 Сервер автоматически отключится через 6 часов.
-Создано: ${new Date().toLocaleString('ru-RU')}
 
 ---
-
 🔥 **VPS GENERATOR PRO** • Работает на GitHub Pages
 `;
-                await uploadFile('README.md', readme, '📋 Добавлена информация VPS');
-                addLog('✅ Информация VPS загружена');
+                await uploadFile('README.md', readme, '📋 Добавлена документация');
+                addLog('✅ Документация загружена');
 
-                // CONFIG
-                const config = `# VPS КОНФИГУРАЦИЯ
-VPS_NAME="${repoName}"
-VPS_URL="https://${currentUsername}.github.io/${repoName}"
-UPTIME="6 hours"
-CREATED="${new Date().toISOString()}"
-ADMIN_PANEL="enabled"
-`;
-                await uploadFile('config/settings.json', config, '⚙️ Конфигурация VPS');
-                addLog('✅ Конфигурация VPS загружена');
-
-                // 7. ВКЛЮЧАЕМ GITHUB PAGES
+                // ВКЛЮЧЕНИЕ GITHUB PAGES
                 addLog('🌐 Публикация VPS сервера...');
                 await new Promise(r => setTimeout(r, 3000));
                 
@@ -728,28 +739,26 @@ ADMIN_PANEL="enabled"
                     addLog('⚠️ Ожидание публикации...');
                 }
 
-                // 8. ОБНОВЛЯЕМ ССЫЛКИ
-                const publicUrl = `https://${currentUsername}.github.io/${repoName}`;
-                document.getElementById('adminLink').innerHTML = publicUrl;
-                document.getElementById('publicLink').innerHTML = publicUrl;
+                // ОБНОВЛЕНИЕ ССЫЛОК
+                const vpsUrl = `https://${currentUsername}.github.io/${repoName}`;
+                document.getElementById('adminLink').innerHTML = vpsUrl;
+                document.getElementById('publicLink').innerHTML = vpsUrl;
                 
-                // 9. ЗАПУСКАЕМ ТАЙМЕР
+                // ЗАПУСК ТАЙМЕРА
                 startTimer(6);
-                document.getElementById('serverStatus').innerHTML = 'АКТИВЕН';
                 
-                // 10. ФИНАЛ
-                addLog('🎉🎉🎉 VPS СЕРВЕР ЗАПУЩЕН! 🎉🎉🎉');
-                addLog(`🔗 Ссылка: ${publicUrl}`);
+                // ФИНАЛ
+                addLog('🎉🎉🎉 VPS СЕРВЕР ЗАПУЩЕН!');
+                addLog(`🔗 Ссылка: ${vpsUrl}`);
                 addLog('⏳ Сервер будет работать 6 часов');
                 addLog('✅ Админ панель активна!');
                 
             } catch (error) {
                 addLog(`❌ ОШИБКА: ${error.message}`);
-                console.error(error);
             }
         }
 
-        // ТАЙМЕР ДЛЯ ИНТЕРФЕЙСА
+        // ЗАПУСК ТАЙМЕРА ПРИ ЗАГРУЗКЕ
         startTimer(6);
     </script>
 </body>
