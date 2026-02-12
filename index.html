@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI GitHub Панель</title>
+<style>
+body {
+    background:#0f172a;
+    color:white;
+    font-family:Arial;
+    padding:30px;
+}
+input, textarea {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    background:#1e293b;
+    color:white;
+    border:1px solid #334155;
+}
+button {
+    padding:12px;
+    background:#22c55e;
+    border:none;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>AI GitHub Авто-Создание</h1>
+
+<label>GitHub Token:</label>
+<input id="githubToken" type="password">
+
+<label>OpenRouter API Key:</label>
+<input id="openrouterKey" type="password">
+
+<label>Название нового репозитория:</label>
+<input id="repoName">
+
+<label>Описание проекта (что создать):</label>
+<textarea id="prompt"></textarea>
+
+<button onclick="createProject()">Создать проект</button>
+
+<pre id="log"></pre>
+
+<script>
+async function createProject() {
+
+const token = document.getElementById("githubToken").value;
+const openKey = document.getElementById("openrouterKey").value;
+const repoName = document.getElementById("repoName").value;
+const prompt = document.getElementById("prompt").value;
+const log = document.getElementById("log");
+
+log.innerText = "Создаём репозиторий...";
+
+const repoResponse = await fetch("https://api.github.com/user/repos", {
+    method:"POST",
+    headers:{
+        "Authorization":"token " + token,
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        name:repoName,
+        private:false
+    })
+});
+
+const repoData = await repoResponse.json();
+
+if(repoData.message){
+    log.innerText = "Ошибка создания репозитория: " + repoData.message;
+    return;
+}
+
+log.innerText = "Генерируем код через AI...";
+
+const aiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method:"POST",
+    headers:{
+        "Authorization":"Bearer " + openKey,
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        model:"deepseek/deepseek-chat",
+        messages:[
+            {role:"system", content:"Ты создаёшь полный рабочий код проекта."},
+            {role:"user", content:prompt}
+        ]
+    })
+});
+
+const aiData = await aiResponse.json();
+const code = aiData.choices[0].message.content;
+
+log.innerText = "Загружаем файл в репозиторий...";
+
+await fetch(`https://api.github.com/repos/${repoData.owner.login}/${repoName}/contents/index.html`, {
+    method:"PUT",
+    headers:{
+        "Authorization":"token " + token,
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        message:"initial commit",
+        content:btoa(code)
+    })
+});
+
+log.innerText = "Готово! Репозиторий создан и файл загружен.";
+}
+</script>
+
+</body>
+</html>
