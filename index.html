@@ -2,244 +2,210 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>PRO AI Bot Builder Installer</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js"></script>
-
+<title>Telegram AI Bot AUTO</title>
 <style>
-body{background:#0f1115;color:#fff;font-family:monospace;padding:20px}
-input,textarea{width:100%;margin:6px 0;padding:10px;background:#1a1d24;border:1px solid #333;color:#fff}
-button{padding:12px;background:#00ff99;border:none;font-weight:bold;cursor:pointer;margin-top:10px}
-#log{background:#000;padding:10px;height:280px;overflow:auto;margin-top:15px}
+body{background:#0f172a;color:white;font-family:Arial;padding:40px;max-width:700px;margin:auto}
+input,textarea,button{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:none}
+input,textarea{background:#1e293b;color:white}
+button{background:#22c55e;font-weight:bold;cursor:pointer}
+pre{background:black;padding:20px;height:220px;overflow:auto}
 </style>
 </head>
 <body>
 
-<h2>🚀 PRO AI Telegram Bot Builder (FINAL)</h2>
+<h2>🚀 Telegram AI Bot FULL AUTO</h2>
 
-<input id="gh" placeholder="GitHub PAT (repo + workflow)">
-<input id="repo" placeholder="Repository name">
-
-<textarea id="tokens" placeholder="Telegram tokens (каждый с новой строки)"></textarea>
-
+<input id="username" placeholder="GitHub Username">
+<input id="token" placeholder="GitHub Classic Token (repo + workflow)">
+<input id="repo" placeholder="Repository Name">
+<input id="telegram" placeholder="Telegram Bot Token">
 <input id="openrouter" placeholder="OpenRouter API Key">
+<textarea id="prompt" placeholder="System Prompt"></textarea>
 
-<textarea id="prompts" placeholder="System prompts (каждый с новой строки)"></textarea>
-
-<button onclick="install()">INSTALL AI BUILDER</button>
-
+<button onclick="install()">INSTALL</button>
 <pre id="log"></pre>
 
 <script>
-const logEl=document.getElementById("log");
-function log(t){logEl.textContent+=t+"\n";logEl.scrollTop=logEl.scrollHeight;}
-function b64(s){return btoa(unescape(encodeURIComponent(s)));}
+
+function log(t){document.getElementById("log").innerText+=t+"\n";}
+
+async function createFile(path,content){
+  await fetch(`https://api.github.com/repos/${username.value}/${repo.value}/contents/${path}`,{
+    method:"PUT",
+    headers:{
+      "Authorization":"token "+token.value,
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      message:"Add "+path,
+      content:btoa(unescape(encodeURIComponent(content)))
+    })
+  });
+}
+
+async function triggerWorkflow(){
+  await fetch(`https://api.github.com/repos/${username.value}/${repo.value}/actions/workflows/bot.yml/dispatches`,{
+    method:"POST",
+    headers:{
+      "Authorization":"token "+token.value,
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({ref:"main"})
+  });
+}
 
 async function install(){
 
-const gh=document.getElementById("gh").value.trim();
-const repo=document.getElementById("repo").value.trim();
-const tokens=document.getElementById("tokens").value.trim().split("\n").map(x=>x.trim()).filter(Boolean);
-const openrouter=document.getElementById("openrouter").value.trim();
-const prompts=document.getElementById("prompts").value.trim().split("\n");
+  log("→ Creating private repo...");
 
-if(!gh||!repo||!tokens.length||!openrouter){
-log("Заполни все поля");
-return;
+  await fetch("https://api.github.com/user/repos",{
+    method:"POST",
+    headers:{
+      "Authorization":"token "+token.value,
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      name:repo.value,
+      private:true,
+      auto_init:true
+    })
+  });
+
+  log("✓ Repo created");
+
+  const packageJson = `
+{
+  "name":"ai-bot",
+  "version":"1.0.0",
+  "main":"bot.js",
+  "dependencies":{
+    "axios":"^1.6.0",
+    "dotenv":"^16.3.1"
+  }
+}
+`;
+
+  const botJs = `
+require('dotenv').config();
+const axios=require('axios');
+const fs=require('fs');
+
+const TELEGRAM_TOKEN=process.env.TELEGRAM_TOKEN;
+const OPENROUTER_API_KEY=process.env.OPENROUTER_API_KEY;
+const SYSTEM_PROMPT=process.env.SYSTEM_PROMPT;
+
+const offsetFile='offset.json';
+
+function getOffset(){
+  if(!fs.existsSync(offsetFile))return 0;
+  return JSON.parse(fs.readFileSync(offsetFile)).offset||0;
 }
 
-const headers={
-Authorization:`token ${gh}`,
-Accept:"application/vnd.github+json",
-"Content-Type":"application/json"
-};
-
-try{
-
-log("→ Проверка GitHub...");
-const userRes=await fetch("https://api.github.com/user",{headers});
-if(!userRes.ok) throw new Error("Неверный GitHub токен");
-const user=await userRes.json();
-const username=user.login;
-log("✓ Аккаунт: "+username);
-
-await fetch("https://api.github.com/user/repos",{
-method:"POST",
-headers,
-body:JSON.stringify({name:repo,private:false})
-});
-
-const repoApi=`https://api.github.com/repos/${username}/${repo}`;
-
-async function upload(path,content){
-await fetch(`${repoApi}/contents/${path}`,{
-method:"PUT",
-headers,
-body:JSON.stringify({
-message:"deploy "+path,
-content:b64(content)
-})
-});
-log("✓ "+path);
+function saveOffset(offset){
+  fs.writeFileSync(offsetFile,JSON.stringify({offset}));
 }
 
-await upload("package.json",JSON.stringify({
-type:"module",
-dependencies:{ "node-fetch":"^3.3.2" }
-},null,2));
-
-await upload("bot.js",`
-import fetch from "node-fetch";
-
-const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
-
-const BOTS = [
-${tokens.map((_,i)=>`{
-token: process.env.TELEGRAM_TOKEN_${i+1},
-prompt: process.env.SYSTEM_PROMPT_${i+1}
-}`).join(",")}
-].filter(b=>b.token);
-
-const MAX_RUNTIME = 5.8 * 60 * 60 * 1000;
-const startTime = Date.now();
-
-async function aiReply(text, systemPrompt){
-
-const res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer "+OPENROUTER_KEY,
-"HTTP-Referer":"https://github.com",
-"X-Title":"AI Bot Builder"
-},
-body:JSON.stringify({
-model:"openai/gpt-4o-mini",
-messages:[
-{role:"system",content:systemPrompt||"You are helpful AI"},
-{role:"user",content:text}
-]
-})
-});
-
-const data = await res.json();
-return data.choices?.[0]?.message?.content || "AI error";
+async function commitOffset(offset){
+  const data=fs.readFileSync(offsetFile).toString();
+  const res=await axios.get(
+    \`https://api.github.com/repos/\${process.env.GITHUB_REPOSITORY}/contents/offset.json\`,
+    {headers:{Authorization:"token "+process.env.GITHUB_TOKEN}}
+  );
+  await axios.put(
+    \`https://api.github.com/repos/\${process.env.GITHUB_REPOSITORY}/contents/offset.json\`,
+    {
+      message:"Update offset",
+      content:Buffer.from(data).toString('base64'),
+      sha:res.data.sha
+    },
+    {headers:{Authorization:"token "+process.env.GITHUB_TOKEN}}
+  );
 }
 
-async function runBot(bot){
+async function run(){
 
-const api=\`https://api.telegram.org/bot\${bot.token}\`;
-let offset=0;
+  const offset=getOffset();
 
-while(true){
+  const updates=await axios.get(
+    \`https://api.telegram.org/bot\${TELEGRAM_TOKEN}/getUpdates?offset=\${offset}&timeout=0\`
+  );
 
-if(Date.now()-startTime>MAX_RUNTIME){
-process.exit(0);
+  if(!updates.data.result.length)return;
+
+  for(const update of updates.data.result){
+
+    if(!update.message||!update.message.text)continue;
+
+    const ai=await axios.post(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        model:"openai/gpt-3.5-turbo",
+        messages:[
+          {role:"system",content:SYSTEM_PROMPT},
+          {role:"user",content:update.message.text}
+        ]
+      },
+      {headers:{Authorization:"Bearer "+OPENROUTER_API_KEY}}
+    );
+
+    const reply=ai.data.choices[0].message.content;
+
+    await axios.post(
+      \`https://api.telegram.org/bot\${TELEGRAM_TOKEN}/sendMessage\`,
+      {chat_id:update.message.chat.id,text:reply}
+    );
+
+    saveOffset(update.update_id+1);
+    await commitOffset(update.update_id+1);
+  }
 }
 
-try{
+run();
+`;
 
-const res=await fetch(\`\${api}/getUpdates?timeout=50&offset=\${offset}\`);
-const data=await res.json();
+  const envFile=`
+TELEGRAM_TOKEN=${telegram.value}
+OPENROUTER_API_KEY=${openrouter.value}
+SYSTEM_PROMPT=${prompt.value}
+`;
 
-for(const upd of data.result){
-offset=upd.update_id+1;
+  const offsetFile=`{"offset":0}`;
 
-if(upd.message){
-const chat=upd.message.chat.id;
-const text=upd.message.text||"";
+  const workflow=`
+name: Bot
 
-if(text==="/start"){
-await fetch(\`\${api}/sendMessage\`,{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({chat_id:chat,text:"🚀 AI Builder Active"})
-});
-}else{
-const reply=await aiReply(text,bot.prompt);
-await fetch(\`\${api}/sendMessage\`,{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({chat_id:chat,text:reply})
-});
-}
-}
-}
-
-}catch(e){
-await new Promise(r=>setTimeout(r,5000));
-}
-}
-}
-
-for(const bot of BOTS){
-runBot(bot);
-}
-`);
-
-await upload(".github/workflows/bot.yml",`
-name: AI Bot Builder
 on:
-workflow_dispatch:
-schedule:
-- cron: "*/5 * * * *"
+  schedule:
+    - cron: "*/1 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
 jobs:
-run:
-runs-on: ubuntu-latest
-timeout-minutes: 360
-steps:
-- uses: actions/checkout@v4
-- uses: actions/setup-node@v4
-with:
-node-version: 20
-- run: npm install
-- run: node bot.js
-env:
-${tokens.map((_,i)=>`TELEGRAM_TOKEN_${i+1}: \${{ secrets.TELEGRAM_TOKEN_${i+1} }}
-SYSTEM_PROMPT_${i+1}: \${{ secrets.SYSTEM_PROMPT_${i+1} }}`).join("\n")}
-OPENROUTER_API_KEY: \${{ secrets.OPENROUTER_API_KEY }}
-`);
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install
+      - run: node bot.js
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+`;
 
-log("→ Получение public key...");
-const keyRes=await fetch(`${repoApi}/actions/secrets/public-key`,{headers});
-const keyData=await keyRes.json();
+  await createFile("package.json",packageJson);
+  await createFile("bot.js",botJs);
+  await createFile(".env",envFile);
+  await createFile("offset.json",offsetFile);
+  await createFile(".github/workflows/bot.yml",workflow);
 
-function encrypt(secret){
-const encoder=new TextEncoder();
-const messageBytes=encoder.encode(secret);
-const publicKeyBytes=Uint8Array.from(atob(keyData.key),c=>c.charCodeAt(0));
-const encryptedBytes=nacl.box.seal(messageBytes,publicKeyBytes);
-return btoa(String.fromCharCode(...encryptedBytes));
+  log("✓ Files created");
+  log("→ Triggering workflow...");
+  await triggerWorkflow();
+  log("🔥 FULL AUTO COMPLETE");
+
 }
 
-for(let i=0;i<tokens.length;i++){
-
-await fetch(`${repoApi}/actions/secrets/TELEGRAM_TOKEN_${i+1}`,{
-method:"PUT",
-headers,
-body:JSON.stringify({encrypted_value:encrypt(tokens[i]),key_id:keyData.key_id})
-});
-
-await fetch(`${repoApi}/actions/secrets/SYSTEM_PROMPT_${i+1}`,{
-method:"PUT",
-headers,
-body:JSON.stringify({encrypted_value:encrypt(prompts[i]||""),key_id:keyData.key_id})
-});
-}
-
-await fetch(`${repoApi}/actions/secrets/OPENROUTER_API_KEY`,{
-method:"PUT",
-headers,
-body:JSON.stringify({encrypted_value:encrypt(openrouter),key_id:keyData.key_id})
-});
-
-log("🔥 ГОТОВО.");
-log("Открой репозиторий → Actions → Run workflow");
-
-}catch(e){
-log("Ошибка: "+e.message);
-}
-}
 </script>
 </body>
 </html>
