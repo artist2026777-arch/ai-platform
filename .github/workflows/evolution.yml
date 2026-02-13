@@ -1,0 +1,32 @@
+name: AI PLATFORM PRO
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Описание проекта"
+        required: true
+        type: string
+
+jobs:
+  evolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - run: git config --global user.name "github-actions"
+      - run: git config --global user.email "actions@github.com"
+
+      - run: npm install
+
+      - name: Run AI PRO
+        run: node ai/runner.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TASK: ${{ github.event.inputs.task }}
