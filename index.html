@@ -2,207 +2,143 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Telegram AI Bot AUTO</title>
+<title>ULTRA AI DEV PLATFORM</title>
 <style>
-body{background:#0f172a;color:white;font-family:Arial;padding:40px;max-width:700px;margin:auto}
-input,textarea,button{width:100%;padding:12px;margin:10px 0;border-radius:8px;border:none}
-input,textarea{background:#1e293b;color:white}
-button{background:#22c55e;font-weight:bold;cursor:pointer}
-pre{background:black;padding:20px;height:220px;overflow:auto}
+body{background:#0f172a;color:white;font-family:Arial;padding:30px;max-width:1100px;margin:auto}
+input,textarea,button,select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none}
+input,textarea,select{background:#1e293b;color:white}
+button{background:#ef4444;font-weight:bold;cursor:pointer}
+pre{background:black;padding:20px;height:260px;overflow:auto}
 </style>
 </head>
 <body>
 
-<h2>🚀 Telegram AI Bot FULL AUTO</h2>
+<h2>🚀 ULTRA AI DEV PLATFORM</h2>
 
 <input id="username" placeholder="GitHub Username">
-<input id="token" placeholder="GitHub Classic Token (repo + workflow)">
+<input id="token" placeholder="GitHub PAT (repo + workflow + pages)">
 <input id="repo" placeholder="Repository Name">
-<input id="telegram" placeholder="Telegram Bot Token">
 <input id="openrouter" placeholder="OpenRouter API Key">
-<textarea id="prompt" placeholder="System Prompt"></textarea>
 
-<button onclick="install()">INSTALL</button>
+<select id="mode">
+  <option value="create">Создать проект</option>
+  <option value="edit">Редактировать файл</option>
+  <option value="test">Сгенерировать тесты</option>
+</select>
+
+<input id="filepath" placeholder="Путь к файлу (для edit)">
+<textarea id="description" placeholder="Опиши задачу..."></textarea>
+
+<button onclick="runUltra()">RUN ULTRA</button>
 <pre id="log"></pre>
 
 <script>
 
 function log(t){document.getElementById("log").innerText+=t+"\n";}
 
+async function github(path,method,body){
+  return fetch(`https://api.github.com/repos/${username.value}/${repo.value}/${path}`,{
+    method:method,
+    headers:{
+      "Authorization":"token "+token.value,
+      "Content-Type":"application/json"
+    },
+    body: body ? JSON.stringify(body) : null
+  });
+}
+
 async function createFile(path,content){
-  await fetch(`https://api.github.com/repos/${username.value}/${repo.value}/contents/${path}`,{
-    method:"PUT",
+  await github(`contents/${path}`,"PUT",{
+    message:"AI update "+path,
+    content:btoa(unescape(encodeURIComponent(content)))
+  });
+}
+
+async function updateFile(path,newContent){
+  const file = await github(`contents/${path}`,"GET");
+  const data = await file.json();
+
+  await github(`contents/${path}`,"PUT",{
+    message:"AI modify "+path,
+    content:btoa(unescape(encodeURIComponent(newContent))),
+    sha:data.sha
+  });
+}
+
+async function aiRequest(prompt){
+  const res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
+    method:"POST",
     headers:{
-      "Authorization":"token "+token.value,
+      "Authorization":"Bearer "+openrouter.value,
       "Content-Type":"application/json"
     },
     body:JSON.stringify({
-      message:"Add "+path,
-      content:btoa(unescape(encodeURIComponent(content)))
-    })
-  });
-}
-
-async function triggerWorkflow(){
-  await fetch(`https://api.github.com/repos/${username.value}/${repo.value}/actions/workflows/bot.yml/dispatches`,{
-    method:"POST",
-    headers:{
-      "Authorization":"token "+token.value,
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({ref:"main"})
-  });
-}
-
-async function install(){
-
-  log("→ Creating private repo...");
-
-  await fetch("https://api.github.com/user/repos",{
-    method:"POST",
-    headers:{
-      "Authorization":"token "+token.value,
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      name:repo.value,
-      private:true,
-      auto_init:true
+      model:"openai/gpt-4o-mini",
+      messages:[
+        {role:"system",content:"Ты senior fullstack developer. Возвращай чистый код без объяснений."},
+        {role:"user",content:prompt}
+      ]
     })
   });
 
-  log("✓ Repo created");
-
-  const packageJson = `
-{
-  "name":"ai-bot",
-  "version":"1.0.0",
-  "main":"bot.js",
-  "dependencies":{
-    "axios":"^1.6.0",
-    "dotenv":"^16.3.1"
-  }
-}
-`;
-
-  const botJs = `
-require('dotenv').config();
-const axios=require('axios');
-const fs=require('fs');
-
-const TELEGRAM_TOKEN=process.env.TELEGRAM_TOKEN;
-const OPENROUTER_API_KEY=process.env.OPENROUTER_API_KEY;
-const SYSTEM_PROMPT=process.env.SYSTEM_PROMPT;
-
-const offsetFile='offset.json';
-
-function getOffset(){
-  if(!fs.existsSync(offsetFile))return 0;
-  return JSON.parse(fs.readFileSync(offsetFile)).offset||0;
+  const data = await res.json();
+  return data.choices[0].message.content;
 }
 
-function saveOffset(offset){
-  fs.writeFileSync(offsetFile,JSON.stringify({offset}));
-}
+async function runUltra(){
 
-async function commitOffset(offset){
-  const data=fs.readFileSync(offsetFile).toString();
-  const res=await axios.get(
-    \`https://api.github.com/repos/\${process.env.GITHUB_REPOSITORY}/contents/offset.json\`,
-    {headers:{Authorization:"token "+process.env.GITHUB_TOKEN}}
-  );
-  await axios.put(
-    \`https://api.github.com/repos/\${process.env.GITHUB_REPOSITORY}/contents/offset.json\`,
-    {
-      message:"Update offset",
-      content:Buffer.from(data).toString('base64'),
-      sha:res.data.sha
-    },
-    {headers:{Authorization:"token "+process.env.GITHUB_TOKEN}}
-  );
-}
+  if(mode.value==="create"){
 
-async function run(){
+    log("→ Генерация проекта...");
 
-  const offset=getOffset();
+    const code = await aiRequest(description.value);
 
-  const updates=await axios.get(
-    \`https://api.telegram.org/bot\${TELEGRAM_TOKEN}/getUpdates?offset=\${offset}&timeout=0\`
-  );
-
-  if(!updates.data.result.length)return;
-
-  for(const update of updates.data.result){
-
-    if(!update.message||!update.message.text)continue;
-
-    const ai=await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        model:"openai/gpt-3.5-turbo",
-        messages:[
-          {role:"system",content:SYSTEM_PROMPT},
-          {role:"user",content:update.message.text}
-        ]
+    await fetch("https://api.github.com/user/repos",{
+      method:"POST",
+      headers:{
+        "Authorization":"token "+token.value,
+        "Content-Type":"application/json"
       },
-      {headers:{Authorization:"Bearer "+OPENROUTER_API_KEY}}
-    );
+      body:JSON.stringify({
+        name:repo.value,
+        private:false,
+        auto_init:true
+      })
+    });
 
-    const reply=ai.data.choices[0].message.content;
+    await createFile("index.js",code);
+    log("✓ Проект создан");
 
-    await axios.post(
-      \`https://api.telegram.org/bot\${TELEGRAM_TOKEN}/sendMessage\`,
-      {chat_id:update.message.chat.id,text:reply}
-    );
-
-    saveOffset(update.update_id+1);
-    await commitOffset(update.update_id+1);
   }
-}
 
-run();
-`;
+  if(mode.value==="edit"){
 
-  const envFile=`
-TELEGRAM_TOKEN=${telegram.value}
-OPENROUTER_API_KEY=${openrouter.value}
-SYSTEM_PROMPT=${prompt.value}
-`;
+    log("→ AI редактирует файл...");
 
-  const offsetFile=`{"offset":0}`;
+    const newCode = await aiRequest(
+      "Вот задача: "+description.value+
+      "\\nОтредактируй файл: "+filepath.value
+    );
 
-  const workflow=`
-name: Bot
+    await updateFile(filepath.value,newCode);
+    log("✓ Файл обновлён");
 
-on:
-  schedule:
-    - cron: "*/1 * * * *"
-  workflow_dispatch:
+  }
 
-permissions:
-  contents: write
+  if(mode.value==="test"){
 
-jobs:
-  run:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm install
-      - run: node bot.js
-        env:
-          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
-`;
+    log("→ Генерация тестов...");
 
-  await createFile("package.json",packageJson);
-  await createFile("bot.js",botJs);
-  await createFile(".env",envFile);
-  await createFile("offset.json",offsetFile);
-  await createFile(".github/workflows/bot.yml",workflow);
+    const tests = await aiRequest(
+      "Сгенерируй unit тесты для проекта"
+    );
 
-  log("✓ Files created");
-  log("→ Triggering workflow...");
-  await triggerWorkflow();
-  log("🔥 FULL AUTO COMPLETE");
+    await createFile("test.js",tests);
+    log("✓ Тесты добавлены");
+
+  }
+
+  log("🔥 ULTRA MODE COMPLETE");
 
 }
 
