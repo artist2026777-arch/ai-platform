@@ -5,7 +5,6 @@
 <title>PRO AI Bot Builder Installer</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl/1.0.3/nacl.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tweetnacl-util/0.15.1/nacl-util.min.js"></script>
 
 <style>
 body{background:#0f1115;color:#fff;font-family:monospace;padding:20px}
@@ -16,7 +15,7 @@ button{padding:12px;background:#00ff99;border:none;font-weight:bold;cursor:point
 </head>
 <body>
 
-<h2>🚀 PRO AI Telegram Bot Builder</h2>
+<h2>🚀 PRO AI Telegram Bot Builder (FINAL)</h2>
 
 <input id="gh" placeholder="GitHub PAT (repo + workflow)">
 <input id="repo" placeholder="Repository name">
@@ -25,7 +24,7 @@ button{padding:12px;background:#00ff99;border:none;font-weight:bold;cursor:point
 
 <input id="openrouter" placeholder="OpenRouter API Key">
 
-<textarea id="prompts" placeholder="System prompts (каждый с новой строки, по порядку токенов)"></textarea>
+<textarea id="prompts" placeholder="System prompts (каждый с новой строки)"></textarea>
 
 <button onclick="install()">INSTALL AI BUILDER</button>
 
@@ -62,7 +61,6 @@ const userRes=await fetch("https://api.github.com/user",{headers});
 if(!userRes.ok) throw new Error("Неверный GitHub токен");
 const user=await userRes.json();
 const username=user.login;
-
 log("✓ Аккаунт: "+username);
 
 await fetch("https://api.github.com/user/repos",{
@@ -155,7 +153,7 @@ if(text==="/start"){
 await fetch(\`\${api}/sendMessage\`,{
 method:"POST",
 headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({chat_id:chat,text:"🚀 AI Builder Bot Active"})
+body:JSON.stringify({chat_id:chat,text:"🚀 AI Builder Active"})
 });
 }else{
 const reply=await aiReply(text,bot.prompt);
@@ -207,18 +205,21 @@ const keyRes=await fetch(`${repoApi}/actions/secrets/public-key`,{headers});
 const keyData=await keyRes.json();
 
 function encrypt(secret){
-const m=nacl.util.decodeUTF8(secret);
-const k=nacl.util.decodeBase64(keyData.key);
-const e=nacl.box.seal(m,k);
-return nacl.util.encodeBase64(e);
+const encoder=new TextEncoder();
+const messageBytes=encoder.encode(secret);
+const publicKeyBytes=Uint8Array.from(atob(keyData.key),c=>c.charCodeAt(0));
+const encryptedBytes=nacl.box.seal(messageBytes,publicKeyBytes);
+return btoa(String.fromCharCode(...encryptedBytes));
 }
 
 for(let i=0;i<tokens.length;i++){
+
 await fetch(`${repoApi}/actions/secrets/TELEGRAM_TOKEN_${i+1}`,{
 method:"PUT",
 headers,
 body:JSON.stringify({encrypted_value:encrypt(tokens[i]),key_id:keyData.key_id})
 });
+
 await fetch(`${repoApi}/actions/secrets/SYSTEM_PROMPT_${i+1}`,{
 method:"PUT",
 headers,
@@ -232,7 +233,8 @@ headers,
 body:JSON.stringify({encrypted_value:encrypt(openrouter),key_id:keyData.key_id})
 });
 
-log("🔥 ГОТОВО. Перейди в Actions → Run workflow");
+log("🔥 ГОТОВО.");
+log("Открой репозиторий → Actions → Run workflow");
 
 }catch(e){
 log("Ошибка: "+e.message);
